@@ -1,8 +1,12 @@
 """
-Stage 1: Advanced Normalization Pipeline (Enhanced for High-Recall Blocking)
-Maintains both raw and multiple specialized representations of names and addresses.
-Supports country-aware variations for India, US, and France (open set).
-Extracts structured components (postal code, house number, numeric tokens, legal suffixes, phonetic tokens, rare tokens).
+Stage 1: Advanced Normalization Pipeline (Enhanced for High-Recall Blocking - Stage 2B)
+Maintains raw, normalized, and specialized representations of business names and addresses.
+Supports country-aware variations for India, US, and France.
+Includes:
+- Devanagari / Indic script deterministic transliteration
+- URL / Domain name stripping and token representation
+- Honorific / prefix stripping (M/s, Ms, Mrs, Mr, Smt, Sri, Shri, Dr, The)
+- Comprehensive address numeric signature extraction (slash-aware compounds, alphanumeric house tokens, sorted signatures)
 """
 
 import re
@@ -69,6 +73,45 @@ INDIAN_PHONETIC_PAIRS = [
     (r'jh', 'j')
 ]
 
+# Devanagari script transliteration mapping tables
+DEV_INDEPENDENT_VOWELS = {
+    '\u0905': 'a', '\u0906': 'a', '\u0907': 'i', '\u0908': 'i', '\u0909': 'u',
+    '\u090a': 'u', '\u090b': 'ri', '\u090f': 'e', '\u0910': 'ai', '\u0911': 'o',
+    '\u0912': 'o', '\u0913': 'o', '\u0914': 'au'
+}
+
+DEV_MATRAS = {
+    '\u093e': 'a', '\u093f': 'i', '\u0940': 'i', '\u0941': 'u', '\u0942': 'u',
+    '\u0943': 'ri', '\u0947': 'e', '\u0948': 'ai', '\u0949': 'o', '\u094a': 'o',
+    '\u094b': 'o', '\u094c': 'au'
+}
+
+DEV_CONSONANTS = {
+    '\u0915': 'k', '\u0916': 'kh', '\u0917': 'g', '\u0918': 'gh', '\u0919': 'ng',
+    '\u091a': 'ch', '\u091b': 'ch', '\u091c': 'j', '\u091d': 'jh', '\u091e': 'ny',
+    '\u091f': 't', '\u0920': 'th', '\u0921': 'd', '\u0922': 'dh', '\u0923': 'n',
+    '\u0924': 't', '\u0925': 'th', '\u0926': 'd', '\u0927': 'dh', '\u0928': 'n',
+    '\u092a': 'p', '\u092b': 'f', '\u092c': 'b', '\u092d': 'bh', '\u092e': 'm',
+    '\u092f': 'y', '\u0930': 'r', '\u0932': 'l', '\u0933': 'l', '\u0935': 'v',
+    '\u0936': 'sh', '\u0937': 'sh', '\u0938': 's', '\u0939': 'h',
+    '\u0958': 'q', '\u0959': 'kh', '\u095a': 'g', '\u095b': 'z', '\u095c': 'r',
+    '\u095d': 'rh', '\u095e': 'f', '\u095f': 'y'
+}
+
+DEV_DIGITS = {
+    '\u0966': '0', '\u0967': '1', '\u0968': '2', '\u0969': '3', '\u096a': '4',
+    '\u096b': '5', '\u096c': '6', '\u096d': '7', '\u096e': '8', '\u096f': '9'
+}
+
+# Domain regex
+DOMAINS_TLD_REGEX = re.compile(
+    r'^(?:https?://)?(?:www\.)?([a-z0-9\-]+)(?:\.com|\.in|\.org|\.net|\.co\.in|\.co|\.us|\.io|\.biz|\.info)(?:/.*)?$',
+    re.IGNORECASE
+)
+
+# Honorific prefix regex
+HONORIFICS_REGEX = re.compile(r'^(?:m/s|m\\s|ms|mrs|mr|smt|sri|shri|dr|the)\b[\s\.\-\/]*', re.IGNORECASE)
+
 
 def strip_accents(text: str) -> str:
     """Remove diacritics/accents safely using NFKD decomposition."""
@@ -99,7 +142,6 @@ def get_consonant_skeleton(word: str, country: str = "") -> str:
     first = w[0]
     rest = re.sub(r'[aeiouy\s]', '', w[1:])
     combined = first + rest
-    # collapse consecutive duplicates
     collapsed = re.sub(r'(.)\1+', r'\1', combined)
     return collapsed
 
@@ -131,10 +173,191 @@ def soundex(word: str) -> str:
     return res
 
 
+def transliterate_devanagari(text: str) -> str:
+    """
+    Deterministic Indic/Devanagari to Latin transliteration.
+    Preserves original text, converts Devanagari words to phonetic Latin equivalents.
+    Handles inherent 'a' schwa, independent vowels, matras, halant, and special symbols.
+    """
+    if not text:
+        return ""
+    text = text.replace('\u0950', ' om ')
+    for d_dev, d_lat in DEV_DIGITS.items():
+        text = text.replace(d_dev, d_lat)
+
+    res = []
+    chars = list(text)
+    n = len(chars)
+    i = 0
+    while i < n:
+        c = chars[i]
+        if c in DEV_CONSONANTS:
+            cons = DEV_CONSONANTS[c]
+            if i + 1 < n:
+                nxt = chars[i + 1]
+                if nxt == '\u094d':  # virama / halant
+                    res.append(cons)
+                    i += 2
+                    continue
+                elif nxt in DEV_MATRAS:  # matra replaces inherent 'a'
+                    res.append(cons + DEV_MATRAS[nxt])
+                    i += 2
+                    continue
+                elif nxt in DEV_CONSONANTS or nxt in DEV_INDEPENDENT_VOWELS:
+                    res.append(cons + 'a')
+                    i += 1
+                    continue
+                elif nxt in ['\u0902', '\u0901']:  # Anusvara / Chandrabindu
+                    res.append(cons + 'an')
+                    i += 2
+                    continue
+                elif nxt in ['\u0903']:  # Visarga
+                    res.append(cons + 'ah')
+                    i += 2
+                    continue
+                else:
+                    # End of word or separator: schwa deletion
+                    res.append(cons)
+                    i += 1
+                    continue
+            else:
+                res.append(cons)
+                i += 1
+        elif c in DEV_INDEPENDENT_VOWELS:
+            res.append(DEV_INDEPENDENT_VOWELS[c])
+            i += 1
+        elif c in ['\u0902', '\u0901']:
+            res.append('n')
+            i += 1
+        elif c in ['\u0903']:
+            res.append('h')
+            i += 1
+        elif c == '\u094d':
+            i += 1
+        else:
+            res.append(c)
+            i += 1
+
+    out = ''.join(res)
+    return re.sub(r'\s+', ' ', out).strip()
+
+
+def strip_domain_tld(text: str) -> Optional[str]:
+    """
+    Extract domain-stripped name representation for URL-like business names.
+    Handles www.example.com, example.com, example.in, wilsonjanennacpa.com - 7713691326.
+    """
+    if not text:
+        return None
+    clean = text.lower().strip()
+    # Strip trailing phone numbers / dashes
+    clean = re.sub(r'[\s\-]+[0-9]{7,12}\b', '', clean).strip()
+    # Strip leading honorific if any
+    clean = re.sub(r'^(?:m/s|ms|mrs|mr|smt|sri|shri|dr|the)\b[\s\.]*', '', clean).strip()
+
+    m = DOMAINS_TLD_REGEX.search(clean)
+    if m:
+        domain_body = m.group(1).replace('-', '')
+        return domain_body if len(domain_body) >= 3 else None
+
+    m2 = re.search(r'\b([a-z0-9\-]{3,})\.(?:com|in|org|net|co\.in|co|us|biz)\b', clean)
+    if m2:
+        domain_body = m2.group(1).replace('-', '')
+        return domain_body if len(domain_body) >= 3 else None
+
+    return None
+
+
+def strip_honorifics(text: str) -> Optional[str]:
+    """
+    Deterministic removal of leading honorifics / prefixes.
+    Preserves original text while returning stripped version when present.
+    """
+    if not text:
+        return None
+    clean = text.strip()
+    stripped = HONORIFICS_REGEX.sub('', clean).strip()
+    return stripped if stripped and stripped.lower() != clean.lower() else None
+
+
+def extract_address_signatures(raw_address: str) -> Dict:
+    """
+    Extract normalized numeric components, slash-aware compounds, alphanumeric house tokens,
+    and sorted numeric signatures.
+    Handles formats: 80/28, 38/2, Pno-S-513, A-25, H.No G-755, Door No 825, #A-303, Noa4/524/2, Plot No.1098/100, S. No. 192/5.
+    """
+    if not raw_address:
+        return {
+            "numeric_atoms": set(),
+            "slash_compounds": set(),
+            "house_tokens": set(),
+            "sorted_numeric_sig": None,
+            "house_signature": None
+        }
+
+    clean = raw_address.lower().strip()
+
+    # 1. All numeric atoms (isolated digit sequences)
+    numeric_atoms = set(re.findall(r'\b\d+\b', clean))
+
+    # 2. Slash-aware numeric components (e.g. 80/28, 38/2, 1098/100, 4/524/2, 8-0/28, 192/5)
+    slash_compounds = set()
+    slash_patterns = re.findall(r'(?:\b|[a-z])(\d+(?:[/-]\d+)+)\b', clean)
+    for sp in slash_patterns:
+        parts = [p for p in re.split(r'[/-]', sp) if p.isdigit()]
+        if len(parts) >= 2:
+            slash_compounds.add('_'.join(parts))
+            for p in parts:
+                numeric_atoms.add(p)
+
+    # 3. Alphanumeric house tokens (e.g., Pno-S-513, A-25, H.No G-755, #A-303, Door No 825, Noa4/524/2)
+    house_tokens = set()
+
+    # Standalone letter+digits like #A-303, A-25, S-513, G-755
+    for m in re.finditer(r'#?([a-z]{1,2})[\s\-]?(\d{1,5})\b', clean):
+        pfx, num = m.groups()
+        if pfx not in ['in', 'to', 'at', 'on', 'th', 'st', 'nd', 'rd', 'fl']:
+            house_tokens.add(f"{pfx}{num}")
+            numeric_atoms.add(num)
+
+    # Prefix-driven patterns (door no 825, shop no-46, flat no 303, pno-s-513, plot no 284, h.no g-755)
+    kw_pattern = r'\b(door|shop|flat|pno|plot|h[\.\s]?no|house[\.\s]?no|unit|room|block|blk|noa)[\s\.\-\#:]*(?:no[\s\.\-:]*)?([a-z0-9\-\/]+)'
+    for m in re.finditer(kw_pattern, clean):
+        kw, val = m.groups()
+        val_clean = re.sub(r'[^a-z0-9]', '', val)
+        if val_clean and len(val_clean) <= 10:
+            house_tokens.add(f"{kw}_{val_clean}")
+            house_tokens.add(val_clean)
+            for d in re.findall(r'\d+', val):
+                numeric_atoms.add(d)
+
+    # 4. Canonical house signature
+    house_sig = None
+    if slash_compounds:
+        house_sig = sorted(list(slash_compounds))[0]
+    elif house_tokens:
+        house_sig = sorted(list(house_tokens))[0]
+    elif numeric_atoms:
+        house_sig = sorted(list(numeric_atoms), key=lambda x: (len(x), x))[0]
+
+    # 5. Sorted numeric signature (sorted unique numeric atoms joined by underscore)
+    sorted_unique = sorted(list(numeric_atoms), key=lambda x: (len(x), int(x) if x.isdigit() else 0))
+    sorted_num_sig = '_'.join(sorted_unique[:4]) if sorted_unique else None
+
+    return {
+        "numeric_atoms": numeric_atoms,
+        "slash_compounds": slash_compounds,
+        "house_tokens": house_tokens,
+        "sorted_numeric_sig": sorted_num_sig,
+        "house_signature": house_sig
+    }
+
+
 def normalize_business_name(raw_name: Optional[str], country: str = "US") -> Dict:
     """
     Generate multiple representations and extracted features for a business name.
     Preserves raw name while providing normalized views for blocking and matching.
+    Includes transliterated views for Devanagari, domain cleaning, and honorific stripping.
     """
     raw = str(raw_name or "").strip()
     if not raw:
@@ -159,6 +382,14 @@ def normalize_business_name(raw_name: Optional[str], country: str = "US") -> Dic
             "phonetic_tokens": [],
             "soundex_tokens": [],
             "name_abbrev_expanded": "",
+            "domain_clean": None,
+            "name_no_honorific": None,
+            "no_honorific_tokens": [],
+            "no_honorific_distinctive": [],
+            "name_transliterated": "",
+            "transliterated_tokens": [],
+            "transliterated_distinctive": [],
+            "name_concat_distinctive": ""
         }
 
     # Unicode NFKC
@@ -186,7 +417,7 @@ def normalize_business_name(raw_name: Optional[str], country: str = "US") -> Dic
     no_suffix_sorted = " ".join(sorted(no_suffix_tokens))
 
     # Distinctive (non-generic) tokens
-    distinctive_tokens = [t for t in no_suffix_tokens if t not in GENERIC_STOPWORDS and len(t) >= 3]
+    distinctive_tokens = [t for t in no_suffix_tokens if t not in GENERIC_STOPWORDS and len(t) >= 2]
 
     # Abbreviation expansion
     words_expanded = [COMMON_ABBREVIATIONS.get(t.upper(), t.upper()).lower() for t in tokens]
@@ -204,6 +435,34 @@ def normalize_business_name(raw_name: Optional[str], country: str = "US") -> Dic
     c3 = extract_char_ngrams(alnum, 3)
     c4 = extract_char_ngrams(alnum, 4)
     c5 = extract_char_ngrams(alnum, 5)
+
+    # --- Targeted Additions ---
+    # Domain / URL cleaning
+    domain_clean = strip_domain_tld(raw)
+
+    # Honorific stripping
+    honorific_clean = strip_honorifics(raw)
+    honorific_tokens = []
+    honorific_distinctive = []
+    if honorific_clean:
+        h_ascii = strip_accents(unicodedata.normalize('NFKC', honorific_clean).lower())
+        h_alnum = re.sub(r'[^a-z0-9\s]', ' ', h_ascii).strip()
+        honorific_tokens = [t for t in h_alnum.split() if t and t.upper() not in LEGAL_SUFFIXES_LIST]
+        honorific_distinctive = [t for t in honorific_tokens if t not in GENERIC_STOPWORDS and len(t) >= 2]
+
+    # Devanagari / Indic script handling
+    has_devanagari = any('\u0900' <= c <= '\u097f' for c in raw)
+    translit_raw = transliterate_devanagari(raw) if has_devanagari else ""
+    translit_tokens = []
+    translit_distinctive = []
+    if translit_raw:
+        t_clean = re.sub(r'[^a-z0-9\s]', ' ', translit_raw.lower())
+        t_tokens = [t for t in t_clean.split() if t]
+        translit_tokens = [t for t in t_tokens if t.upper() not in LEGAL_SUFFIXES_LIST]
+        translit_distinctive = [t for t in translit_tokens if t not in GENERIC_STOPWORDS and len(t) >= 2]
+
+    # Concatenated distinctive tokens (for matching against domain-stripped candidate names)
+    concat_distinctive = "".join(distinctive_tokens) if len(distinctive_tokens) >= 2 else ""
 
     return {
         "name_raw": raw,
@@ -226,6 +485,14 @@ def normalize_business_name(raw_name: Optional[str], country: str = "US") -> Dic
         "phonetic_tokens": phonetic_tokens,
         "soundex_tokens": soundex_tokens,
         "name_abbrev_expanded": name_abbrev_expanded,
+        "domain_clean": domain_clean,
+        "name_no_honorific": honorific_clean,
+        "no_honorific_tokens": honorific_tokens,
+        "no_honorific_distinctive": honorific_distinctive,
+        "name_transliterated": translit_raw,
+        "transliterated_tokens": translit_tokens,
+        "transliterated_distinctive": translit_distinctive,
+        "name_concat_distinctive": concat_distinctive,
     }
 
 
@@ -266,6 +533,7 @@ def extract_house_number(tokens: List[str]) -> Optional[str]:
 def normalize_business_address(raw_address: Optional[str], country: str = "US") -> Dict:
     """
     Generate multiple representations and structured components for an address.
+    Includes slash-aware numeric components, alphanumeric house tokens, and sorted signatures.
     """
     raw = str(raw_address or "").strip()
     if not raw:
@@ -279,6 +547,11 @@ def normalize_business_address(raw_address: Optional[str], country: str = "US") 
             "postal_code": None,
             "house_number": None,
             "numeric_tokens": set(),
+            "numeric_atoms": set(),
+            "slash_compounds": set(),
+            "house_tokens": set(),
+            "sorted_numeric_sig": None,
+            "house_signature": None,
             "address_char_3gram": set(),
             "address_char_4gram": set(),
             "address_char_5gram": set(),
@@ -304,8 +577,10 @@ def normalize_business_address(raw_address: Optional[str], country: str = "US") 
 
     # Structured components
     postal = extract_postal_code(raw, country=country)
-    digits = set(re.findall(r'\b\d+\b', raw))
     house_num = extract_house_number(tokens)
+
+    # Address numeric signatures & house token extraction
+    addr_sigs = extract_address_signatures(raw)
 
     # Address distinctive tokens (non-numeric, length >= 4)
     addr_distinctive = [t for t in tokens if not t.isdigit() and len(t) >= 4 and t not in GENERIC_STOPWORDS]
@@ -324,7 +599,12 @@ def normalize_business_address(raw_address: Optional[str], country: str = "US") 
         "address_tokens_sorted": tokens_sorted,
         "postal_code": postal,
         "house_number": house_num,
-        "numeric_tokens": digits,
+        "numeric_tokens": addr_sigs["numeric_atoms"],
+        "numeric_atoms": addr_sigs["numeric_atoms"],
+        "slash_compounds": addr_sigs["slash_compounds"],
+        "house_tokens": addr_sigs["house_tokens"],
+        "sorted_numeric_sig": addr_sigs["sorted_numeric_sig"],
+        "house_signature": addr_sigs["house_signature"],
         "address_char_3gram": c3,
         "address_char_4gram": c4,
         "address_char_5gram": c5,

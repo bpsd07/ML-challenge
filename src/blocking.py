@@ -1,9 +1,16 @@
+from __future__ import annotations
 """
-Stage 2: High-Recall Multi-Strategy Blocking Engine (V2 - Target >=99% Recall)
-Implements 20+ specialized high-recall, precision-conscious blocking strategies.
-Eliminates arbitrary posting-list cutoffs that lose true matches.
-Employs country partitioning, rare-token indexing, character n-gram inverted indexing,
-phonetic representations, address signatures, and adaptive key frequency filtering.
+Stage 2: High-Recall Multi-Strategy Blocking Engine (V2 - Stage 2B Targeted Blocking)
+Implements 39 specialized high-recall, precision-conscious blocking strategies:
+- Baseline V8 strategies (B01 to B27): Exact, suffixes, n-grams, rare token pairs, phonetic skeletons, address signatures.
+- Targeted Stage 2B strategies (TB01 to TB12):
+  * Devanagari / Indic transliterated token & postal/numeric keys
+  * Domain / URL stripping & concatenation keys
+  * Honorific stripping keys
+  * Slash-aware numeric compound keys (80/28, 38/2, etc.)
+  * Alphanumeric house token keys (Pno-S-513, A-25, H.No G-755, Door No 825, #A-303, etc.)
+  * Pure address composite keys for script gap recovery
+Eliminates arbitrary candidate truncations while maintaining strict frequency caps to prevent candidate explosions.
 """
 
 import sys
@@ -11,14 +18,24 @@ import time
 import re
 from collections import defaultdict, Counter
 from typing import Dict, List, Set, Tuple, Optional
-import polars as pl
-import numpy as np
+try:
+    import polars as pl
+except ImportError:
+    pl = None
+try:
+    import numpy as np
+except Exception:
+    np = None
 
 from normalization import (
     normalize_business_name,
     normalize_business_address,
     extract_postal_code,
     extract_house_number,
+    extract_address_signatures,
+    strip_domain_tld,
+    strip_honorifics,
+    transliterate_devanagari,
     get_consonant_skeleton,
     soundex,
     GENERIC_STOPWORDS
@@ -51,7 +68,7 @@ class HighRecallBlocker:
     ) -> Dict[str, List[str]]:
         """
         Generate blocking keys for all implemented strategies.
-        Optionally filter by version level (1 to 8).
+        Optionally filter by version level (1 to 8) or targeted strategies.
         """
         keys = defaultdict(list)
         cntry = country or "UNKNOWN"
@@ -68,12 +85,23 @@ class HighRecallBlocker:
         soundex_toks = name_norm["soundex_tokens"]
         name_abbrev = name_norm["name_abbrev_expanded"]
 
+        domain_clean = name_norm.get("domain_clean")
+        no_honorific_distinctive = name_norm.get("no_honorific_distinctive", [])
+        name_no_honorific = name_norm.get("name_no_honorific")
+        translit_distinctive = name_norm.get("transliterated_distinctive", [])
+        concat_distinctive = name_norm.get("name_concat_distinctive", "")
+
         addr_alnum = addr_norm["address_alnum"]
         addr_tokens = addr_norm["address_tokens"]
         postal = addr_norm["postal_code"]
         house_num = addr_norm["house_number"]
-        numeric_tokens = list(addr_norm["numeric_tokens"])
-        addr_distinctive = addr_norm["address_distinctive_tokens"]
+        numeric_tokens = list(addr_norm.get("numeric_tokens", []))
+        addr_distinctive = addr_norm.get("address_distinctive_tokens", [])
+
+        slash_compounds = list(addr_norm.get("slash_compounds", []))
+        house_tokens = list(addr_norm.get("house_tokens", []))
+        sorted_num_sig = addr_norm.get("sorted_numeric_sig")
+        house_sig = addr_norm.get("house_signature")
 
         # -------------------------------------------------------------
         # VERSION 1: BASELINE STRATEGIES
@@ -215,6 +243,85 @@ class HighRecallBlocker:
             # 27. Consonant skeleton + house number
             if phonetic_toks and house_num:
                 keys["B27_phonetic_house"].append(f"{phonetic_toks[0][:5]}_{house_num}")
+
+        # -------------------------------------------------------------
+        # STAGE 2B: TARGETED RECALL RECOVERY BLOCKERS (TB01 to TB12)
+        # -------------------------------------------------------------
+        # TB01: Honorific-stripped first distinctive token
+        # Handles "Smt Shrinivas Jewellery", "M/s Bismillah College", "Mr Alpha Estate", "Sri At Holdings"
+        if no_honorific_distinctive:
+            keys["TB01_honorific_tok0"].append(no_honorific_distinctive[0])
+        elif distinctive_toks:
+            keys["TB01_honorific_tok0"].append(distinctive_toks[0])
+
+        # TB02: Honorific-stripped full normalized name
+        if name_no_honorific:
+            h_alnum = re.sub(r'[^a-z0-9\s]', ' ', name_no_honorific.lower()).strip()
+            if h_alnum:
+                keys["TB02_honorific_name"].append(h_alnum)
+        elif name_alnum:
+            keys["TB02_honorific_name"].append(name_alnum)
+
+        # TB03: Domain / URL normalized name matching concatenated tokens
+        # Handles "wilsonjanennacpa.com", "consultantsinternational.com", "kapishwarhotelsindia.com"
+        if domain_clean:
+            keys["TB03_domain_concat"].append(domain_clean)
+        no_suf_concat = no_suf.replace(" ", "")
+        if len(no_suf_concat) >= 5:
+            keys["TB03_domain_concat"].append(no_suf_concat)
+        if concat_distinctive and concat_distinctive != no_suf_concat:
+            keys["TB03_domain_concat"].append(concat_distinctive)
+
+        # TB04: Indic / Devanagari transliterated distinctive token 0
+        # Handles "ॐ आईटी प्राइवेट लिमिटेड" -> "om", "शिवम इम्पेक्स" -> "shivam", "गुरु एंटरप्राइजेज" -> "guru"
+        if translit_distinctive:
+            keys["TB04_indic_translit_tok0"].append(translit_distinctive[0])
+        elif distinctive_toks:
+            keys["TB04_indic_translit_tok0"].append(distinctive_toks[0])
+
+        # TB05: Indic transliterated token 0 + postal code
+        # Couples transliterated token with postal for high precision
+        if translit_distinctive and postal:
+            keys["TB05_indic_translit_postal"].append(f"{translit_distinctive[0]}_{postal}")
+        elif distinctive_toks and postal:
+            keys["TB05_indic_translit_postal"].append(f"{distinctive_toks[0]}_{postal}")
+
+        # TB06: Postal code + sorted numeric signature
+        # Handles complex compound addresses under the same postal PIN code
+        if postal and sorted_num_sig:
+            keys["TB06_postal_sorted_numeric"].append(f"{postal}_{sorted_num_sig}")
+
+        # TB07: Postal code + slash-aware numeric compound (e.g. 80/28, 38/2, 1098/100, 4/524/2)
+        if postal and slash_compounds:
+            for sc in slash_compounds:
+                keys["TB07_postal_slash_compound"].append(f"{postal}_{sc}")
+
+        # TB08: Postal code + alphanumeric house token (e.g. Pno-S-513, A-25, H.No G-755, #A-303, Door No 825)
+        if postal and house_tokens:
+            for ht in house_tokens:
+                keys["TB08_postal_house_token"].append(f"{postal}_{ht}")
+
+        # TB09: Street distinctive token + slash-aware numeric compound
+        # Handles cases where postal code is missing or slightly discordant
+        if addr_distinctive and slash_compounds:
+            for sc in slash_compounds:
+                keys["TB09_addr_tok0_slash_compound"].append(f"{addr_distinctive[0]}_{sc}")
+
+        # TB10: Street distinctive token + alphanumeric house token
+        if addr_distinctive and house_tokens:
+            for ht in house_tokens:
+                keys["TB10_addr_tok0_house_token"].append(f"{addr_distinctive[0]}_{ht}")
+
+        # TB11: Postal code + distinctive address token pair (pure address blocking for script gap)
+        if postal and len(addr_distinctive) >= 2:
+            pair = sorted([addr_distinctive[0], addr_distinctive[1]])
+            keys["TB11_postal_addr_token_pair"].append(f"{postal}_{pair[0]}_{pair[1]}")
+
+        # TB12: Indic transliterated token 0 + house signature / numeric atom
+        if translit_distinctive and house_sig:
+            keys["TB12_translit_house_sig"].append(f"{translit_distinctive[0]}_{house_sig}")
+        elif distinctive_toks and house_sig:
+            keys["TB12_translit_house_sig"].append(f"{distinctive_toks[0]}_{house_sig}")
 
         return keys
 
