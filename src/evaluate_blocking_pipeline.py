@@ -30,7 +30,7 @@ from normalization import (
     extract_postal_code,
     extract_house_number
 )
-from blocking import HighRecallBlocker
+from blocking import HighRecallBlocker, MAX_KEY_FREQUENCY
 
 # Setup paths
 BASE_DIR = Path(__file__).resolve().parent.parent
