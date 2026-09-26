@@ -1,0 +1,138 @@
+[{"stream_name":"stderr","time":9.10053662,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":9.100634174,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":10.440857385,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.440918285,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.440925747,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.440930745,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":11.385319969,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":11.38546135,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":11.385476869,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":11.3854818,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":12.853986639,"data":"=== ENVIRONMENT \u0026 RESOURCE CHECK ===\n"}
+,{"stream_name":"stdout","time":12.854057111,"data":"Total RAM: 31.35 GB | Available: 30.28 GB\n"}
+,{"stream_name":"stdout","time":12.854067707,"data":"CPU Count: 4\n"}
+,{"stream_name":"stdout","time":12.854071816,"data":"Workspace initialized at: /kaggle/working/business_er\n"}
+,{"stream_name":"stdout","time":12.876253588,"data":"Wrote normalization.py successfully.\n"}
+,{"stream_name":"stdout","time":12.897802291,"data":"Wrote blocking.py successfully.\n"}
+,{"stream_name":"stdout","time":12.930483268,"data":"Wrote evaluate_blocking_pipeline.py successfully.\n"}
+,{"stream_name":"stdout","time":13.074441182,"data":"=== EXECUTING HIGH-RECALL BLOCKING AUDIT \u0026 OPTIMIZATION ===\n"}
+,{"stream_name":"stdout","time":14.045687898,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":14.045740648,"data":"AMAZON ML CHALLENGE: HIGH-RECALL BLOCKING OPTIMIZATION \u0026 AUDIT\n"}
+,{"stream_name":"stdout","time":14.045747804,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":14.04575238,"data":"Dataset files resolved:\n"}
+,{"stream_name":"stdout","time":14.04575614,"data":"  S1: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source1.tsv\n"}
+,{"stream_name":"stdout","time":14.045760757,"data":"  S2: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source2.tsv\n"}
+,{"stream_name":"stdout","time":14.045764788,"data":"  S3: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source3.tsv\n"}
+,{"stream_name":"stdout","time":14.045768833,"data":"  GT: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_ground_truth.tsv\n"}
+,{"stream_name":"stdout","time":14.045780511,"data":"\n"}
+,{"stream_name":"stdout","time":14.045784402,"data":"Loading ground truth...\n"}
+,{"stream_name":"stdout","time":39.212258448,"data":"Loaded ground truth for 2,206,821 S1 entities (7,638,365 total true links).\n"}
+,{"stream_name":"stdout","time":39.212328599,"data":"\n"}
+,{"stream_name":"stdout","time":39.212335224,"data":"Loading Train Source 1...\n"}
+,{"stream_name":"stdout","time":41.668148762,"data":"Sampling Pilot A (50,000 S1, seed=42) and Pilot B (50,000 S1, seed=1337)...\n"}
+,{"stream_name":"stdout","time":42.119712394,"data":"Pilot A size: 50,000 S1 entities\n"}
+,{"stream_name":"stdout","time":42.119830235,"data":"Pilot B size: 50,000 S1 entities (100% disjoint from Pilot A)\n"}
+,{"stream_name":"stdout","time":42.119842074,"data":"Pilot A Ground Truth Links: Total=173,429 (S2=83,936, S3=89,493)\n"}
+,{"stream_name":"stdout","time":42.119845141,"data":"\n"}
+,{"stream_name":"stdout","time":42.119848083,"data":"Verifying Cross-Country true matches on Pilot A...\n"}
+,{"stream_name":"stdout","time":42.119851101,"data":"\n"}
+,{"stream_name":"stdout","time":42.119853638,"data":"Loading Full S2 and S3 Candidate Sources...\n"}
+,{"stream_name":"stdout","time":53.335930923,"data":"Loaded 5,034,616 S2 and 5,285,603 S3 records in 10.98s.\n"}
+,{"stream_name":"stdout","time":53.335974594,"data":"Indexing 5,034,616 records from Source 2...\n"}
+,{"stream_name":"stdout","time":275.329012153,"data":"  Indexed 1,000,000 records in 222.0s...\n"}
+,{"stream_name":"stdout","time":483.910182631,"data":"  Indexed 2,000,000 records in 430.6s...\n"}
+,{"stream_name":"stdout","time":709.645535955,"data":"  Indexed 3,000,000 records in 656.3s...\n"}
+,{"stream_name":"stdout","time":911.744431912,"data":"  Indexed 4,000,000 records in 858.4s...\n"}
+,{"stream_name":"stdout","time":1129.511886719,"data":"  Indexed 5,000,000 records in 1076.2s...\n"}
+,{"stream_name":"stdout","time":1136.552285967,"data":"Finished indexing Source 2 (5,034,616 records) in 1083.24s.\n"}
+,{"stream_name":"stdout","time":1136.552342553,"data":"Indexing 5,285,603 records from Source 3...\n"}
+,{"stream_name":"stdout","time":1365.545027343,"data":"  Indexed 1,000,000 records in 229.0s...\n"}
+,{"stream_name":"stdout","time":1571.764080797,"data":"  Indexed 2,000,000 records in 435.2s...\n"}
+,{"stream_name":"stdout","time":1809.148914708,"data":"  Indexed 3,000,000 records in 672.6s...\n"}
+,{"stream_name":"stdout","time":2013.477535177,"data":"  Indexed 4,000,000 records in 876.9s...\n"}
+,{"stream_name":"stdout","time":2230.208821274,"data":"  Indexed 5,000,000 records in 1093.6s...\n"}
+,{"stream_name":"stdout","time":2289.540119663,"data":"Finished indexing Source 3 (5,285,603 records) in 1152.85s.\n"}
+,{"stream_name":"stdout","time":2289.540157543,"data":"Building candidate lookup for true links in Pilot A...\n"}
+,{"stream_name":"stdout","time":2354.908816429,"data":"Cached audit metadata for 173,429 true candidate records.\n"}
+,{"stream_name":"stdout","time":2354.908861146,"data":"\n"}
+,{"stream_name":"stdout","time":2354.908869384,"data":"Pre-normalizing Pilot A S1 entities...\n"}
+,{"stream_name":"stdout","time":2364.802103526,"data":"\n"}
+,{"stream_name":"stdout","time":2364.80219269,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":2364.802201667,"data":"STEP 1: AUDITING BASELINE BLOCKER (VERSION 1) \u0026 13.31% MISSED MATCHES\n"}
+,{"stream_name":"stdout","time":2364.802207103,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":2431.42400338,"data":"Version 1 (Baseline) Results on Pilot A:\n"}
+,{"stream_name":"stdout","time":2431.424046578,"data":"  Combined Recall: 86.11% (149,344/173,429)\n"}
+,{"stream_name":"stdout","time":2431.424054735,"data":"  S2 Recall:       86.17% (72,325/83,936)\n"}
+,{"stream_name":"stdout","time":2431.424061485,"data":"  S3 Recall:       86.06% (77,019/89,493)\n"}
+,{"stream_name":"stdout","time":2431.424080787,"data":"  Missed Pairs:    24,085 (13.89%)\n"}
+,{"stream_name":"stdout","time":2431.424085676,"data":"\n"}
+,{"stream_name":"stdout","time":2431.424089956,"data":"Categorizing all missed pairs into the 18 specific failure modes...\n"}
+,{"stream_name":"stdout","time":2431.675503695,"data":"Created /kaggle/working/business_er/reports/blocking_miss_analysis.md successfully.\n"}
+,{"stream_name":"stdout","time":2431.675544745,"data":"\n"}
+,{"stream_name":"stdout","time":2431.675551192,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":2431.675556616,"data":"STEP 2: AUDITING INDIVIDUAL BLOCKER PERFORMANCE \u0026 UNIQUE CONTRIBUTION\n"}
+,{"stream_name":"stdout","time":2431.675561407,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":2502.288777091,"data":"\n"}
+,{"stream_name":"stdout","time":2502.288821954,"data":"Individual Blocker Audit Summary:\n"}
+,{"stream_name":"stdout","time":2502.288828045,"data":"Blocker Name                 | Matches  | Recall  | Unique Matches  | Mean Cands/S1\n"}
+,{"stream_name":"stdout","time":2502.288833602,"data":"--------------------------------------------------------------------------------\n"}
+,{"stream_name":"stdout","time":2502.288838668,"data":"B01_exact_name               | 44,808   |  25.84% | 9               | 10.9        \n"}
+,{"stream_name":"stdout","time":2502.288843654,"data":"B02_no_legal_suffix          | 43,206   |  24.91% | 641             | 21.3        \n"}
+,{"stream_name":"stdout","time":2502.288848587,"data":"B03_sorted_tokens            | 46,250   |  26.67% | 645             | 9.1         \n"}
+,{"stream_name":"stdout","time":2502.288854185,"data":"B04_initials_pfx             | 73,102   |  42.15% | 886             | 85.4        \n"}
+,{"stream_name":"stdout","time":2502.288859277,"data":"B05_first_two_tokens         | 99,569   |  57.41% | 8,091           | 528.5       \n"}
+,{"stream_name":"stdout","time":2502.288864192,"data":"B06_prefix4_len              | 71,978   |  41.50% | 2,120           | 1163.4      \n"}
+,{"stream_name":"stdout","time":2502.288869191,"data":"B07_house_tok0               | 78,389   |  45.20% | 178             | 9.7         \n"}
+,{"stream_name":"stdout","time":2502.288874176,"data":"B08_postal_name_pfx          | 6,546    |   3.77% | 15              | 0.1         \n"}
+,{"stream_name":"stdout","time":2502.28887893,"data":"B09_postal_house             | 7,395    |   4.26% | 245             | 2.7         \n"}
+,{"stream_name":"stdout","time":2502.288883838,"data":"B10_token_numeric            | 83,127   |  47.93% | 650             | 19.8        \n"}
+,{"stream_name":"stdout","time":2502.288889026,"data":"B11_addr_lead_tokens         | 73,612   |  42.45% | 16,365          | 1565.5      \n"}
+,{"stream_name":"stdout","time":2502.288894085,"data":"\n"}
+,{"stream_name":"stdout","time":2502.288898891,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":2502.288903935,"data":"STEP 7 \u0026 8: PROGRESSIVE ITERATIVE RECALL IMPROVEMENT (V1 -\u003e V8)\n"}
+,{"stream_name":"stdout","time":2502.288909299,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":2502.288914511,"data":"\n"}
+,{"stream_name":"stdout","time":2502.288918971,"data":"Version                    | S2 Recall  | S3 Recall  | Comb Recall | Mean Cands | P95    | Max   \n"}
+,{"stream_name":"stdout","time":2502.288924265,"data":"-----------------------------------------------------------------------------------------------\n"}
+,{"stream_name":"stdout","time":2570.3927679,"data":"V1_Baseline                |    86.17% |    86.06% |     86.11% |     3229.6 |  15989 |  32930\n"}
+,{"stream_name":"stdout","time":2755.313040892,"data":"V2_Normalization_Abbrev    |    88.93% |    89.12% |     89.03% |     7195.6 |  20401 |  38464\n"}
+,{"stream_name":"stdout","time":3018.527820345,"data":"V3_Char_Ngrams             |    89.11% |    89.30% |     89.21% |     7565.6 |  21915 |  40381\n"}
+,{"stream_name":"stdout","time":3301.705247876,"data":"V4_Rare_Tokens_Pairs       |    90.25% |    91.51% |     90.90% |     8071.1 |  22624 |  47106\n"}
+,{"stream_name":"stdout","time":3582.189362699,"data":"V5_Address_Signatures      |    90.25% |    91.54% |     90.92% |     8072.5 |  22627 |  47106\n"}
+,{"stream_name":"stdout","time":3988.140390051,"data":"V6_Phonetic_Retrieval      |    90.49% |    91.80% |     91.17% |     9430.4 |  23967 |  53810\n"}
+,{"stream_name":"stdout","time":4364.880093507,"data":"V7_Adaptive_Frequency_Filter |    90.49% |    91.80% |     91.17% |     9430.4 |  23967 |  53810\n"}
+,{"stream_name":"stdout","time":4751.471581761,"data":"V8_Full_Optimized_Union    |    90.49% |    91.80% |     91.17% |     9430.4 |  23967 |  53810\n"}
+,{"stream_name":"stdout","time":4751.471629307,"data":"\n"}
+,{"stream_name":"stdout","time":4751.471634023,"data":"Saved /kaggle/working/business_er/reports/blocking_experiments.csv successfully.\n"}
+,{"stream_name":"stdout","time":4751.471638322,"data":"\n"}
+,{"stream_name":"stdout","time":4751.471642031,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":4751.471645817,"data":"STEP 9 \u0026 10: INDEPENDENT VALIDATION ON PILOT B (DISJOINT 50k SAMPLE)\n"}
+,{"stream_name":"stdout","time":4751.471649842,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":4752.383496618,"data":"Pilot B Ground Truth Links: Total=173,035 (S2=83,650, S3=89,385)\n"}
+,{"stream_name":"stdout","time":5201.57591717,"data":"\n"}
+,{"stream_name":"stdout","time":5201.575984678,"data":"Frozen Blocker (V8) Performance on Independent Pilot B:\n"}
+,{"stream_name":"stdout","time":5201.575990276,"data":"  Combined Recall: 91.2659% (157,922/173,035)\n"}
+,{"stream_name":"stdout","time":5201.575994186,"data":"  S2 Recall:       90.5248% (75,724/83,650)\n"}
+,{"stream_name":"stdout","time":5201.575997869,"data":"  S3 Recall:       91.9595% (82,198/89,385)\n"}
+,{"stream_name":"stdout","time":5201.576001478,"data":"  Mean Cands/S1:   9364.98 (Median: 8090.5, P95: 23830.0, P99: 33497.0, Max: 53047)\n"}
+,{"stream_name":"stdout","time":5201.576005273,"data":"  Runtime:         403.72s\n"}
+,{"stream_name":"stdout","time":5201.576008853,"data":"Saved checkpoint to /kaggle/working/business_er/checkpoints/blocking/blocking_checkpoint_v8.json\n"}
+,{"stream_name":"stdout","time":5201.576012594,"data":"Created /kaggle/working/business_er/reports/blocking_optimization_report.md successfully.\n"}
+,{"stream_name":"stdout","time":5201.576016402,"data":"\n"}
+,{"stream_name":"stdout","time":5201.57602001,"data":"=== Blocking Optimization Completed in 5142.03s ===\n"}
+,{"stream_name":"stdout","time":5201.607103991,"data":"=== COPYING REPORTS \u0026 CHECKPOINTS TO WORKING ROOT FOR EXPORT ===\n"}
+,{"stream_name":"stdout","time":5201.607155629,"data":"Exported report: blocking_experiments.csv (1.2 KB)\n"}
+,{"stream_name":"stdout","time":5201.607161949,"data":"Exported report: blocking_optimization_report.md (1.7 KB)\n"}
+,{"stream_name":"stdout","time":5201.60718348,"data":"Exported report: blocking_miss_analysis.md (10.2 KB)\n"}
+,{"stream_name":"stdout","time":5201.607189936,"data":"Exported checkpoint: blocking/blocking_checkpoint_v8.json\n"}
+,{"stream_name":"stdout","time":5201.607226047,"data":"\n"}
+,{"stream_name":"stdout","time":5201.60723121,"data":"=== ALL ARTIFACTS READY FOR DOWNLOAD VIA KAGGLE CLI ===\n"}
+,{"stream_name":"stderr","time":5206.885884834,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":5206.885931862,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":5207.155271864,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":5207.155303999,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":5208.021507743,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":5208.432893906,"data":"[NbConvertApp] Writing 83973 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":5211.808938198,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":5213.017797222,"data":"[NbConvertApp] Writing 517996 bytes to __results__.html\n"}
+]

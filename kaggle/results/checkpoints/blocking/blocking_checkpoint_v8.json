@@ -1,0 +1,29 @@
+{
+  "stage": "BLOCKING_OPTIMIZATION",
+  "status": "COMPLETED",
+  "timestamp": "2026-09-26T19:50:40Z",
+  "blocker_version": "V8_Full_Optimized_Union",
+  "strategies_count": 27,
+  "pilot_a": {
+    "n_s1": 50000,
+    "total_true_links": 173429,
+    "combined_recall_pct": 91.1693,
+    "s2_recall_pct": 90.4916,
+    "s3_recall_pct": 91.8049,
+    "mean_candidates": 9430.4,
+    "p95_candidates": 23967.1,
+    "p99_candidates": 33646.1,
+    "max_candidates": 53810
+  },
+  "pilot_b_independent": {
+    "n_s1": 50000,
+    "total_true_links": 173035,
+    "combined_recall_pct": 91.2659,
+    "s2_recall_pct": 90.5248,
+    "s3_recall_pct": 91.9595,
+    "mean_candidates": 9364.98,
+    "p95_candidates": 23830.0,
+    "p99_candidates": 33497.0,
+    "max_candidates": 53047
+  }
+}
