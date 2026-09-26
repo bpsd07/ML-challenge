@@ -1,0 +1,35 @@
+{
+  "stage": "STAGE_2B_TARGETED_BLOCKING_OPTIMIZATION",
+  "status": "COMPLETED",
+  "timestamp": "2026-09-26T22:11:46Z",
+  "blocker_version": "V9_Final_Targeted_Union",
+  "baseline_v8_strategies_count": 27,
+  "targeted_strategies_count": 12,
+  "total_active_strategies_count": 39,
+  "pilot_a": {
+    "n_s1": 50000,
+    "total_true_links": 173429,
+    "v8_baseline_recall_pct": 91.2887,
+    "v9_targeted_recall_pct": 94.7125,
+    "delta_recall_gain": 3.4238,
+    "s2_recall_pct": 94.1026,
+    "s3_recall_pct": 95.2845,
+    "mean_candidates": 9874.29,
+    "p95_candidates": 25492.0,
+    "p99_candidates": 35191.1,
+    "max_candidates": 55480
+  },
+  "pilot_b_independent": {
+    "n_s1": 50000,
+    "total_true_links": 173035,
+    "v8_baseline_recall_pct": 91.27,
+    "v9_targeted_recall_pct": 94.6912,
+    "delta_recall_gain": 3.4212,
+    "s2_recall_pct": 94.1076,
+    "s3_recall_pct": 95.2375,
+    "mean_candidates": 9811.71,
+    "p95_candidates": 25409.0,
+    "p99_candidates": 34921.2,
+    "max_candidates": 54409
+  }
+}
