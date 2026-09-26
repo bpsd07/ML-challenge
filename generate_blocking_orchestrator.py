@@ -1,0 +1,131 @@
+import json
+from pathlib import Path
+
+def generate_blocking_orchestrator():
+    cells = [
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "# Amazon Business Entity Resolution: High-Recall Blocking Optimization\n",
+                "### Objective: Maximize Blocking Recall (Target >=99%) on 50k Pilot Benchmark\n",
+                "- Audit 13.31% missed matches from baseline across 18 specific failure modes.\n",
+                "- Evaluate individual blocker contributions and unique value.\n",
+                "- Progressively evaluate Versions 1 through 8 (Char N-Grams, Rare Token Pairs, Address Signatures, Phonetic Retrieval, Uncapped Indexes).\n",
+                "- Validate frozen blocker on independent 50k Pilot B.\n",
+                "- Save checkpoints and analytical reports."
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "import os\n",
+                "import sys\n",
+                "import shutil\n",
+                "import psutil\n",
+                "from pathlib import Path\n",
+                "\n",
+                "print('=== ENVIRONMENT & RESOURCE CHECK ===')\n",
+                "ram = psutil.virtual_memory()\n",
+                "print(f'Total RAM: {ram.total / (1024**3):.2f} GB | Available: {ram.available / (1024**3):.2f} GB')\n",
+                "print(f'CPU Count: {os.cpu_count()}')\n",
+                "\n",
+                "# Setup working directory structure\n",
+                "BASE_WORKING = Path('/kaggle/working/business_er') if Path('/kaggle/working').exists() else Path('./business_er')\n",
+                "for sub in ['src', 'checkpoints/blocking', 'cache', 'reports', 'output', 'logs']:\n",
+                "    (BASE_WORKING / sub).mkdir(parents=True, exist_ok=True)\n",
+                "\n",
+                "# Sync src files into working directory\n",
+                "src_candidates = [Path('src'), Path('/kaggle/working/src'), Path('./kaggle/src')]\n",
+                "src_dir = None\n",
+                "for sc in src_candidates:\n",
+                "    if sc.exists() and (sc / 'blocking.py').exists():\n",
+                "        src_dir = sc\n",
+                "        break\n",
+                "\n",
+                "if src_dir:\n",
+                "    for f in src_dir.glob('*.py'):\n",
+                "        shutil.copy(f, BASE_WORKING / 'src' / f.name)\n",
+                "    print(f'Successfully synced src modules from {src_dir} to {BASE_WORKING / \"src\"}')\n",
+                "else:\n",
+                "    print('Warning: src directory not found directly; relying on local path.')\n",
+                "\n",
+                "sys.path.insert(0, str(BASE_WORKING / 'src'))\n",
+                "sys.path.insert(0, 'src')\n"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "print('=== EXECUTING HIGH-RECALL BLOCKING AUDIT & OPTIMIZATION ===')\n",
+                "import evaluate_blocking_pipeline\n",
+                "\n",
+                "# Run the complete blocking evaluation and audit pipeline\n",
+                "evaluate_blocking_pipeline.main()\n"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "print('=== COPYING REPORTS & CHECKPOINTS TO WORKING ROOT FOR EXPORT ===')\n",
+                "export_dir = Path('/kaggle/working') if Path('/kaggle/working').exists() else Path('.')\n",
+                "\n",
+                "reports_src = BASE_WORKING / 'reports'\n",
+                "checkpoints_src = BASE_WORKING / 'checkpoints'\n",
+                "\n",
+                "if reports_src.exists():\n",
+                "    dest_rep = export_dir / 'reports'\n",
+                "    dest_rep.mkdir(parents=True, exist_ok=True)\n",
+                "    for f in reports_src.glob('*'):\n",
+                "        if f.is_file():\n",
+                "            shutil.copy(f, dest_rep / f.name)\n",
+                "            print(f'Exported report: {f.name} ({f.stat().st_size / 1024:.1f} KB)')\n",
+                "\n",
+                "if checkpoints_src.exists():\n",
+                "    dest_chk = export_dir / 'checkpoints'\n",
+                "    dest_chk.mkdir(parents=True, exist_ok=True)\n",
+                "    for f in checkpoints_src.rglob('*.json'):\n",
+                "        rel = f.relative_to(checkpoints_src)\n",
+                "        out_target = dest_chk / rel\n",
+                "        out_target.parent.mkdir(parents=True, exist_ok=True)\n",
+                "        shutil.copy(f, out_target)\n",
+                "        print(f'Exported checkpoint: {rel}')\n",
+                "\n",
+                "print('\\n=== ALL ARTIFACTS READY FOR DOWNLOAD VIA KAGGLE CLI ===')\n"
+            ]
+        }
+    ]
+
+    nb = {
+        "cells": cells,
+        "metadata": {
+            "kernelspec": {
+                "display_name": "Python 3",
+                "language": "python",
+                "name": "python3"
+            },
+            "language_info": {
+                "name": "python",
+                "version": "3.10.0"
+            }
+        },
+        "nbformat": 4,
+        "nbformat_minor": 5
+    }
+
+    out_file = Path("kaggle/main.ipynb")
+    with open(out_file, "w", encoding="utf-8") as f:
+        json.dump(nb, f, indent=2)
+    print(f"Generated {out_file} successfully.")
+
+if __name__ == "__main__":
+    generate_blocking_orchestrator()
