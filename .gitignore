@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Operating System & Archives
+.DS_Store
+__MACOSX/
+Thumbs.db
+*.tmp
+
+# Large dataset files (TSV, CSV, Parquet, data dumps)
+student_resource/dataset/
+*.tsv
+*.parquet
+*.feather
+*.zip
+*.tar.gz
+
+# Model checkpoints & binary artifacts
+*.joblib
+*.pkl
+*.model
+*.bin
+*.onnx
+
+# IDEs & Editors
+.idea/
+.vscode/
+*.swp
+*.swo

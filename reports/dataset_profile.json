@@ -1,0 +1,1881 @@
+{
+  "metadata": {
+    "timestamp": "2026-09-25 20:03:56",
+    "challenge": "Amazon Business Entity Resolution Challenge",
+    "metric": "Macro F0.5",
+    "total_execution_time_sec": 214.22
+  },
+  "files": {
+    "train_source1": {
+      "file_name": "train_source1.tsv",
+      "file_size_mb": 200.34,
+      "row_count": 2206821,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "schema": {
+        "entity_id": "String",
+        "business_name": "String",
+        "business_address": "String",
+        "country": "String"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 0.0,
+        "country": 0.0
+      },
+      "duplicate_rows": 0,
+      "duplicate_rows_pct": 0.0,
+      "unique_names": 1539229,
+      "duplicate_names_count": 667592,
+      "duplicate_names_pct": 30.251,
+      "unique_addresses": 2130606,
+      "duplicate_addresses_count": 76215,
+      "duplicate_addresses_pct": 3.454,
+      "country_distribution": {
+        "India": {
+          "count": 883188,
+          "pct": 40.02
+        },
+        "US": {
+          "count": 1323633,
+          "pct": 59.98
+        }
+      },
+      "top_names": [
+        {
+          "name": "Primary Care Group",
+          "count": 253
+        },
+        {
+          "name": "Ear Nose & Throat Group",
+          "count": 251
+        },
+        {
+          "name": "Pediatric Group",
+          "count": 222
+        },
+        {
+          "name": "Womens Health Group",
+          "count": 220
+        },
+        {
+          "name": "Physical Therapy Group",
+          "count": 218
+        },
+        {
+          "name": "Pediatric Dental Group",
+          "count": 216
+        },
+        {
+          "name": "Behavioral Health Group",
+          "count": 215
+        },
+        {
+          "name": "Chiropractic Group",
+          "count": 209
+        },
+        {
+          "name": "Orthopedic Group",
+          "count": 208
+        },
+        {
+          "name": "Eye Group",
+          "count": 207
+        }
+      ],
+      "top_addresses": [
+        {
+          "address": "108 Norle Street, College Twp, PA",
+          "count": 14
+        },
+        {
+          "address": "218 Phillips Street, Storm Lake, IA",
+          "count": 13
+        },
+        {
+          "address": "43 Franklin Street, Delaware, OH",
+          "count": 13
+        },
+        {
+          "address": "55, Lavkush Vihar, Singhpur, Kachhar Bithoor Road, Kalyanpur, Kanpur Nagar, Uttar Pradesh",
+          "count": 13
+        },
+        {
+          "address": "1921 Willow Park Drive, Fort Worth, TX",
+          "count": 13
+        },
+        {
+          "address": "104 Roadrunner Circle, Elephant Butte, NM",
+          "count": 13
+        },
+        {
+          "address": "333 Court Avenue, Selmer, TN",
+          "count": 12
+        },
+        {
+          "address": "415 Northfield Boulevard, Unit A11, Murfreesboro, TN",
+          "count": 12
+        },
+        {
+          "address": "43233 Clearnight Terrace, Loudoun County, VA",
+          "count": 12
+        },
+        {
+          "address": "520 Kathy Lane, Bldg 10, Dayton, TN",
+          "count": 12
+        }
+      ],
+      "name_char_length_stats": {
+        "count": 2206821,
+        "min": 3.0,
+        "p10": 14.0,
+        "p25": 18.0,
+        "median": 24.0,
+        "mean": 24.03,
+        "std": 7.74,
+        "p75": 30.0,
+        "p90": 34.0,
+        "p95": 37.0,
+        "p99": 42.0,
+        "max": 105.0
+      },
+      "name_word_length_stats": {
+        "count": 2206821,
+        "min": 1.0,
+        "p10": 2.0,
+        "p25": 3.0,
+        "median": 4.0,
+        "mean": 3.55,
+        "std": 0.98,
+        "p75": 4.0,
+        "p90": 5.0,
+        "p95": 5.0,
+        "p99": 6.0,
+        "max": 16.0
+      },
+      "address_char_length_stats": {
+        "count": 2206821,
+        "min": 11.0,
+        "p10": 29.0,
+        "p25": 33.0,
+        "median": 41.0,
+        "mean": 52.07,
+        "std": 25.33,
+        "p75": 70.0,
+        "p90": 90.0,
+        "p95": 103.0,
+        "p99": 124.0,
+        "max": 256.0
+      },
+      "address_word_length_stats": {
+        "count": 2206821,
+        "min": 2.0,
+        "p10": 5.0,
+        "p25": 5.0,
+        "median": 7.0,
+        "mean": 8.03,
+        "std": 3.51,
+        "p75": 10.0,
+        "p90": 13.0,
+        "p95": 15.0,
+        "p99": 19.0,
+        "max": 43.0
+      },
+      "profile_time_sec": 5.46
+    },
+    "train_source2": {
+      "file_name": "train_source2.tsv",
+      "file_size_mb": 466.63,
+      "row_count": 5034616,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "schema": {
+        "entity_id": "String",
+        "business_name": "String",
+        "business_address": "String",
+        "country": "String"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 168967,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 3.356,
+        "country": 0.0
+      },
+      "duplicate_rows": 0,
+      "duplicate_rows_pct": 0.0,
+      "unique_names": 4402009,
+      "duplicate_names_count": 632607,
+      "duplicate_names_pct": 12.565,
+      "unique_addresses": 4337261,
+      "duplicate_addresses_count": 528388,
+      "duplicate_addresses_pct": 10.86,
+      "country_distribution": {
+        "India": {
+          "count": 2017799,
+          "pct": 40.08
+        },
+        "US": {
+          "count": 3016817,
+          "pct": 59.92
+        }
+      },
+      "top_names": [
+        {
+          "name": "Primary Care",
+          "count": 320
+        },
+        {
+          "name": "Physical Therapy",
+          "count": 307
+        },
+        {
+          "name": "Womens Health",
+          "count": 297
+        },
+        {
+          "name": "Urgent Care",
+          "count": 297
+        },
+        {
+          "name": "Behavioral Health",
+          "count": 296
+        },
+        {
+          "name": "Internal Medicine",
+          "count": 288
+        },
+        {
+          "name": "Pediatric Dentistry",
+          "count": 274
+        },
+        {
+          "name": "earnosethroat.com",
+          "count": 269
+        },
+        {
+          "name": "Pediatric Dental",
+          "count": 268
+        },
+        {
+          "name": "Ear Nose & Throat",
+          "count": 220
+        }
+      ],
+      "top_addresses": [
+        {
+          "address": "1948 WEAVER FOREST WAY, MORRISVILLE, NC",
+          "count": 18
+        },
+        {
+          "address": "842 38, CALEDONAI TOWNSHIP, WI",
+          "count": 18
+        },
+        {
+          "address": "66 FRANK EDGE, ALTO, TX",
+          "count": 17
+        },
+        {
+          "address": "55 500, SALT LAKE CITY, UT",
+          "count": 16
+        },
+        {
+          "address": "302 REGENCY CT, AMES, IA",
+          "count": 16
+        },
+        {
+          "address": "G-58/1, BENSON CROSS ROAD, BANGALORE., Karnataka",
+          "count": 16
+        },
+        {
+          "address": "##1105 M, NULL, BIRMINGHAM, AL",
+          "count": 16
+        },
+        {
+          "address": "17200 BELL RD, SURPRISE, AZ",
+          "count": 15
+        },
+        {
+          "address": "06252 TALIAFERRO WAY, ALEANDRIA, VA",
+          "count": 15
+        },
+        {
+          "address": "3710 GOLDFIELD RD, APACHE JUNCTION, AZ",
+          "count": 15
+        }
+      ],
+      "name_char_length_stats": {
+        "count": 5034616,
+        "min": 2.0,
+        "p10": 14.0,
+        "p25": 19.0,
+        "median": 25.0,
+        "mean": 25.1,
+        "std": 8.89,
+        "p75": 31.0,
+        "p90": 37.0,
+        "p95": 40.0,
+        "p99": 48.0,
+        "max": 104.0
+      },
+      "name_word_length_stats": {
+        "count": 5034616,
+        "min": 1.0,
+        "p10": 2.0,
+        "p25": 3.0,
+        "median": 4.0,
+        "mean": 3.61,
+        "std": 1.29,
+        "p75": 4.0,
+        "p90": 5.0,
+        "p95": 6.0,
+        "p99": 7.0,
+        "max": 16.0
+      },
+      "address_char_length_stats": {
+        "count": 4865649,
+        "min": 8.0,
+        "p10": 27.0,
+        "p25": 31.0,
+        "median": 37.0,
+        "mean": 47.83,
+        "std": 23.7,
+        "p75": 63.0,
+        "p90": 84.0,
+        "p95": 97.0,
+        "p99": 118.0,
+        "max": 249.0
+      },
+      "address_word_length_stats": {
+        "count": 4865649,
+        "min": 2.0,
+        "p10": 5.0,
+        "p25": 5.0,
+        "median": 6.0,
+        "mean": 7.56,
+        "std": 3.37,
+        "p75": 9.0,
+        "p90": 13.0,
+        "p95": 15.0,
+        "p99": 18.0,
+        "max": 46.0
+      },
+      "profile_time_sec": 12.19
+    },
+    "train_source3": {
+      "file_name": "train_source3.tsv",
+      "file_size_mb": 480.37,
+      "row_count": 5285603,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "schema": {
+        "entity_id": "String",
+        "business_name": "String",
+        "business_address": "String",
+        "country": "String"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 175916,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 3.328,
+        "country": 0.0
+      },
+      "duplicate_rows": 0,
+      "duplicate_rows_pct": 0.0,
+      "unique_names": 4651609,
+      "duplicate_names_count": 633994,
+      "duplicate_names_pct": 11.995,
+      "unique_addresses": 4632764,
+      "duplicate_addresses_count": 476923,
+      "duplicate_addresses_pct": 9.334,
+      "country_distribution": {
+        "US": {
+          "count": 3170056,
+          "pct": 59.98
+        },
+        "India": {
+          "count": 2115547,
+          "pct": 40.02
+        }
+      },
+      "top_names": [
+        {
+          "name": "Primary Care",
+          "count": 421
+        },
+        {
+          "name": "Physical Therapy",
+          "count": 399
+        },
+        {
+          "name": "Pediatric Dental",
+          "count": 393
+        },
+        {
+          "name": "Womens Health",
+          "count": 379
+        },
+        {
+          "name": "Urgent Care",
+          "count": 377
+        },
+        {
+          "name": "Pediatric Dentistry",
+          "count": 361
+        },
+        {
+          "name": "Behavioral Health",
+          "count": 330
+        },
+        {
+          "name": "Pediatric",
+          "count": 321
+        },
+        {
+          "name": "Internal Medicine",
+          "count": 319
+        },
+        {
+          "name": "The Dent",
+          "count": 254
+        }
+      ],
+      "top_addresses": [
+        {
+          "address": "Ground Floor, Bangalore, KA",
+          "count": 29
+        },
+        {
+          "address": "18, Kolkata, Howrah, WB",
+          "count": 26
+        },
+        {
+          "address": "Floor, Mumbai, MH",
+          "count": 26
+        },
+        {
+          "address": "303, Mumbai, MH",
+          "count": 25
+        },
+        {
+          "address": "12, Ahmedabad, GJ",
+          "count": 23
+        },
+        {
+          "address": "4, Mumbai, MH",
+          "count": 23
+        },
+        {
+          "address": "101, Mumbai, Mumbai City, MH",
+          "count": 23
+        },
+        {
+          "address": "Floor, Bangalore, KA",
+          "count": 22
+        },
+        {
+          "address": "7, Kolkata, Howrah, WB",
+          "count": 21
+        },
+        {
+          "address": "1, Kolkata, Howrah, WB",
+          "count": 21
+        }
+      ],
+      "name_char_length_stats": {
+        "count": 5285603,
+        "min": 2.0,
+        "p10": 14.0,
+        "p25": 18.0,
+        "median": 25.0,
+        "mean": 25.2,
+        "std": 9.49,
+        "p75": 31.0,
+        "p90": 37.0,
+        "p95": 42.0,
+        "p99": 50.0,
+        "max": 123.0
+      },
+      "name_word_length_stats": {
+        "count": 5285603,
+        "min": 1.0,
+        "p10": 2.0,
+        "p25": 3.0,
+        "median": 4.0,
+        "mean": 3.63,
+        "std": 1.39,
+        "p75": 4.0,
+        "p90": 5.0,
+        "p95": 6.0,
+        "p99": 7.0,
+        "max": 18.0
+      },
+      "address_char_length_stats": {
+        "count": 5109687,
+        "min": 2.0,
+        "p10": 30.0,
+        "p25": 35.0,
+        "median": 42.0,
+        "mean": 48.32,
+        "std": 20.18,
+        "p75": 55.0,
+        "p90": 78.0,
+        "p95": 92.0,
+        "p99": 116.0,
+        "max": 240.0
+      },
+      "address_word_length_stats": {
+        "count": 5109687,
+        "min": 1.0,
+        "p10": 5.0,
+        "p25": 5.0,
+        "median": 6.0,
+        "mean": 7.42,
+        "std": 3.17,
+        "p75": 9.0,
+        "p90": 12.0,
+        "p95": 14.0,
+        "p99": 18.0,
+        "max": 43.0
+      },
+      "profile_time_sec": 13.21
+    },
+    "test_source1": {
+      "file_name": "test_source1.tsv",
+      "file_size_mb": 166.91,
+      "row_count": 1732544,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "schema": {
+        "entity_id": "String",
+        "business_name": "String",
+        "business_address": "String",
+        "country": "String"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 0,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 0.0,
+        "country": 0.0
+      },
+      "duplicate_rows": 0,
+      "duplicate_rows_pct": 0.0,
+      "unique_names": 1238867,
+      "duplicate_names_count": 493677,
+      "duplicate_names_pct": 28.494,
+      "unique_addresses": 1677483,
+      "duplicate_addresses_count": 55061,
+      "duplicate_addresses_pct": 3.178,
+      "country_distribution": {
+        "India": {
+          "count": 809986,
+          "pct": 46.75
+        },
+        "France": {
+          "count": 259452,
+          "pct": 14.98
+        },
+        "US": {
+          "count": 663106,
+          "pct": 38.27
+        }
+      },
+      "top_names": [
+        {
+          "name": "Bordeaux Club SARL",
+          "count": 205
+        },
+        {
+          "name": "Nantes Club SARL",
+          "count": 157
+        },
+        {
+          "name": "Lille Club SARL",
+          "count": 147
+        },
+        {
+          "name": "Urgent Care Group",
+          "count": 123
+        },
+        {
+          "name": "Lille Club SAS",
+          "count": 122
+        },
+        {
+          "name": "Bordeaux Club SAS",
+          "count": 118
+        },
+        {
+          "name": "Nantes Club SAS",
+          "count": 117
+        },
+        {
+          "name": "Bordeaux Amicale SARL",
+          "count": 116
+        },
+        {
+          "name": "Ear Nose & Throat Group",
+          "count": 112
+        },
+        {
+          "name": "Internal Medicine Group",
+          "count": 111
+        }
+      ],
+      "top_addresses": [
+        {
+          "address": "12 RUE Lyderic, Lille, Hauts-de-France",
+          "count": 99
+        },
+        {
+          "address": "27 RUE Jean Bart, Lille, Hauts-de-France",
+          "count": 85
+        },
+        {
+          "address": "30 RUE des Meuniers, Lille, Hauts-de-France",
+          "count": 72
+        },
+        {
+          "address": "27 RUE Jean Bart, Maison des Associations, Lille, Hauts-de-France",
+          "count": 67
+        },
+        {
+          "address": "100 RUE de Lille, Tourcoing, Hauts-de-France",
+          "count": 46
+        },
+        {
+          "address": "13 RUE du Chai des Farines, Bordeaux, Nouvelle-Aquitaine",
+          "count": 42
+        },
+        {
+          "address": "8 RUE Segalier, Bordeaux, Nouvelle-Aquitaine",
+          "count": 32
+        },
+        {
+          "address": "60 BD Vauban, Lille, Hauts-de-France",
+          "count": 29
+        },
+        {
+          "address": "3 RUE de la Digue, Lille, Hauts-de-France",
+          "count": 28
+        },
+        {
+          "address": "24 AV Gustave Delory, Roubaix, Hauts-de-France",
+          "count": 27
+        }
+      ],
+      "name_char_length_stats": {
+        "count": 1732544,
+        "min": 3.0,
+        "p10": 14.0,
+        "p25": 18.0,
+        "median": 24.0,
+        "mean": 23.84,
+        "std": 7.67,
+        "p75": 29.0,
+        "p90": 34.0,
+        "p95": 36.0,
+        "p99": 42.0,
+        "max": 92.0
+      },
+      "name_word_length_stats": {
+        "count": 1732544,
+        "min": 1.0,
+        "p10": 2.0,
+        "p25": 3.0,
+        "median": 4.0,
+        "mean": 3.52,
+        "std": 0.92,
+        "p75": 4.0,
+        "p90": 5.0,
+        "p95": 5.0,
+        "p99": 6.0,
+        "max": 14.0
+      },
+      "address_char_length_stats": {
+        "count": 1732544,
+        "min": 11.0,
+        "p10": 31.0,
+        "p25": 36.0,
+        "median": 50.0,
+        "mean": 57.21,
+        "std": 25.03,
+        "p75": 74.0,
+        "p90": 93.0,
+        "p95": 105.0,
+        "p99": 126.0,
+        "max": 268.0
+      },
+      "address_word_length_stats": {
+        "count": 1732544,
+        "min": 2.0,
+        "p10": 5.0,
+        "p25": 6.0,
+        "median": 8.0,
+        "mean": 8.59,
+        "std": 3.58,
+        "p75": 11.0,
+        "p90": 14.0,
+        "p95": 16.0,
+        "p99": 19.0,
+        "max": 43.0
+      },
+      "profile_time_sec": 3.74
+    },
+    "test_source2": {
+      "file_name": "test_source2.tsv",
+      "file_size_mb": 485.86,
+      "row_count": 4887273,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "schema": {
+        "entity_id": "String",
+        "business_name": "String",
+        "business_address": "String",
+        "country": "String"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 129408,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 2.648,
+        "country": 0.0
+      },
+      "duplicate_rows": 0,
+      "duplicate_rows_pct": 0.0,
+      "unique_names": 4311041,
+      "duplicate_names_count": 576232,
+      "duplicate_names_pct": 11.79,
+      "unique_addresses": 4224783,
+      "duplicate_addresses_count": 533082,
+      "duplicate_addresses_pct": 11.204,
+      "country_distribution": {
+        "France": {
+          "count": 703378,
+          "pct": 14.39
+        },
+        "US": {
+          "count": 1871330,
+          "pct": 38.29
+        },
+        "India": {
+          "count": 2312565,
+          "pct": 47.32
+        }
+      },
+      "top_names": [
+        {
+          "name": "CC",
+          "count": 302
+        },
+        {
+          "name": "PC",
+          "count": 197
+        },
+        {
+          "name": "LC",
+          "count": 194
+        },
+        {
+          "name": "SC",
+          "count": 174
+        },
+        {
+          "name": "AC",
+          "count": 174
+        },
+        {
+          "name": "DC",
+          "count": 159
+        },
+        {
+          "name": "Urgent Care",
+          "count": 156
+        },
+        {
+          "name": "Womens Health",
+          "count": 152
+        },
+        {
+          "name": "BC",
+          "count": 148
+        },
+        {
+          "name": "MC",
+          "count": 147
+        }
+      ],
+      "top_addresses": [
+        {
+          "address": "CALAIS",
+          "count": 81
+        },
+        {
+          "address": "27 RUE JEAN BART, LILLE",
+          "count": 79
+        },
+        {
+          "address": "RUE LYDERIC, LILLE",
+          "count": 64
+        },
+        {
+          "address": "BORDEAUX",
+          "count": 64
+        },
+        {
+          "address": "30 RUE DES MEUNIERS, LILLE",
+          "count": 57
+        },
+        {
+          "address": "100 RUE DE LILLE, TOURCOING, Hauts-de-France",
+          "count": 55
+        },
+        {
+          "address": "CALAIS, Hauts-de-France",
+          "count": 54
+        },
+        {
+          "address": "CALAIS, Pas-de-Calais",
+          "count": 48
+        },
+        {
+          "address": "24 - AV GUSTAVE DELORY, ROUBAIX, Hauts-de-France",
+          "count": 41
+        },
+        {
+          "address": "27 RUE JEAN BART, MAISON DES ASSOCIATIONS, LILLE",
+          "count": 38
+        }
+      ],
+      "name_char_length_stats": {
+        "count": 4887273,
+        "min": 2.0,
+        "p10": 14.0,
+        "p25": 19.0,
+        "median": 25.0,
+        "mean": 25.7,
+        "std": 9.12,
+        "p75": 32.0,
+        "p90": 38.0,
+        "p95": 42.0,
+        "p99": 49.0,
+        "max": 102.0
+      },
+      "name_word_length_stats": {
+        "count": 4887273,
+        "min": 1.0,
+        "p10": 2.0,
+        "p25": 3.0,
+        "median": 4.0,
+        "mean": 3.69,
+        "std": 1.24,
+        "p75": 4.0,
+        "p90": 5.0,
+        "p95": 6.0,
+        "p99": 7.0,
+        "max": 15.0
+      },
+      "address_char_length_stats": {
+        "count": 4757865,
+        "min": 5.0,
+        "p10": 28.0,
+        "p25": 32.0,
+        "median": 43.0,
+        "mean": 51.78,
+        "std": 24.27,
+        "p75": 68.0,
+        "p90": 87.0,
+        "p95": 99.0,
+        "p99": 120.0,
+        "max": 269.0
+      },
+      "address_word_length_stats": {
+        "count": 4757865,
+        "min": 1.0,
+        "p10": 5.0,
+        "p25": 5.0,
+        "median": 7.0,
+        "mean": 8.03,
+        "std": 3.51,
+        "p75": 10.0,
+        "p90": 13.0,
+        "p95": 15.0,
+        "p99": 19.0,
+        "max": 44.0
+      },
+      "profile_time_sec": 12.12
+    },
+    "test_source3": {
+      "file_name": "test_source3.tsv",
+      "file_size_mb": 482.56,
+      "row_count": 5082316,
+      "columns": [
+        "entity_id",
+        "business_name",
+        "business_address",
+        "country"
+      ],
+      "schema": {
+        "entity_id": "String",
+        "business_name": "String",
+        "business_address": "String",
+        "country": "String"
+      },
+      "missing_counts": {
+        "entity_id": 0,
+        "business_name": 0,
+        "business_address": 136098,
+        "country": 0
+      },
+      "missing_pcts": {
+        "entity_id": 0.0,
+        "business_name": 0.0,
+        "business_address": 2.678,
+        "country": 0.0
+      },
+      "duplicate_rows": 0,
+      "duplicate_rows_pct": 0.0,
+      "unique_names": 4521929,
+      "duplicate_names_count": 560387,
+      "duplicate_names_pct": 11.026,
+      "unique_addresses": 4456435,
+      "duplicate_addresses_count": 489783,
+      "duplicate_addresses_pct": 9.902,
+      "country_distribution": {
+        "US": {
+          "count": 1945701,
+          "pct": 38.28
+        },
+        "France": {
+          "count": 731615,
+          "pct": 14.4
+        },
+        "India": {
+          "count": 2405000,
+          "pct": 47.32
+        }
+      },
+      "top_names": [
+        {
+          "name": "CC",
+          "count": 387
+        },
+        {
+          "name": "SC",
+          "count": 358
+        },
+        {
+          "name": "AC",
+          "count": 297
+        },
+        {
+          "name": "PC",
+          "count": 286
+        },
+        {
+          "name": "LC",
+          "count": 245
+        },
+        {
+          "name": "MC",
+          "count": 243
+        },
+        {
+          "name": "BC",
+          "count": 226
+        },
+        {
+          "name": "CS",
+          "count": 218
+        },
+        {
+          "name": "Internal Medicine",
+          "count": 214
+        },
+        {
+          "name": "DC",
+          "count": 213
+        }
+      ],
+      "top_addresses": [
+        {
+          "address": "Calais",
+          "count": 89
+        },
+        {
+          "address": "27 Rue Jean Bart, Lille",
+          "count": 84
+        },
+        {
+          "address": "Calais, Pas-de-Calais",
+          "count": 74
+        },
+        {
+          "address": "12 Rue Lyderic, Lille, Nord",
+          "count": 72
+        },
+        {
+          "address": "Calais, Hauts-de-France",
+          "count": 64
+        },
+        {
+          "address": "30 Rue Des Meuniers, Lille, Hauts-de-France",
+          "count": 57
+        },
+        {
+          "address": "Bordeaux, Gironde",
+          "count": 54
+        },
+        {
+          "address": "#27 Rue Jean Bart, Maison Des Associations, Lille, Hauts-de-France",
+          "count": 42
+        },
+        {
+          "address": "024 Av Gustave Delory, Roubaix, Hauts-de-France",
+          "count": 38
+        },
+        {
+          "address": "13 Rue Du Chai Des Farines, Bordeaux, Gironde",
+          "count": 37
+        }
+      ],
+      "name_char_length_stats": {
+        "count": 5082316,
+        "min": 2.0,
+        "p10": 14.0,
+        "p25": 19.0,
+        "median": 25.0,
+        "mean": 25.66,
+        "std": 9.57,
+        "p75": 32.0,
+        "p90": 38.0,
+        "p95": 42.0,
+        "p99": 50.0,
+        "max": 103.0
+      },
+      "name_word_length_stats": {
+        "count": 5082316,
+        "min": 1.0,
+        "p10": 2.0,
+        "p25": 3.0,
+        "median": 4.0,
+        "mean": 3.7,
+        "std": 1.33,
+        "p75": 5.0,
+        "p90": 5.0,
+        "p95": 6.0,
+        "p99": 7.0,
+        "max": 16.0
+      },
+      "address_char_length_stats": {
+        "count": 4946218,
+        "min": 5.0,
+        "p10": 29.0,
+        "p25": 36.0,
+        "median": 44.0,
+        "mean": 50.08,
+        "std": 21.44,
+        "p75": 59.0,
+        "p90": 82.0,
+        "p95": 95.0,
+        "p99": 118.0,
+        "max": 267.0
+      },
+      "address_word_length_stats": {
+        "count": 4946218,
+        "min": 1.0,
+        "p10": 5.0,
+        "p25": 5.0,
+        "median": 7.0,
+        "mean": 7.72,
+        "std": 3.36,
+        "p75": 9.0,
+        "p90": 13.0,
+        "p95": 15.0,
+        "p99": 19.0,
+        "max": 43.0
+      },
+      "profile_time_sec": 12.43
+    },
+    "train_ground_truth": {
+      "file_name": "train_ground_truth.tsv",
+      "file_size_mb": 121.13,
+      "row_count": 2206821,
+      "columns": [
+        "source1_entity_id",
+        "matched_entity_ids"
+      ],
+      "s1_in_gt_count": 2206821,
+      "missing_s1_from_gt": 0,
+      "extra_s1_in_gt": 0,
+      "singleton_count": 123247,
+      "singleton_pct": 5.58,
+      "total_matched_s1_count": 2083574,
+      "total_matched_s1_pct": 94.42,
+      "match_count_distribution": {
+        "0 (singleton)": {
+          "count": 123247,
+          "pct": 5.58
+        },
+        "1": {
+          "count": 119157,
+          "pct": 5.4
+        },
+        "2": {
+          "count": 375212,
+          "pct": 17.0
+        },
+        "3": {
+          "count": 530841,
+          "pct": 24.05
+        },
+        "4": {
+          "count": 484115,
+          "pct": 21.94
+        },
+        "5+": {
+          "count": 574249,
+          "pct": 26.02
+        }
+      },
+      "match_count_stats": {
+        "count": 2206821,
+        "min": 0.0,
+        "p10": 1.0,
+        "p25": 2.0,
+        "median": 3.0,
+        "mean": 3.46,
+        "std": 1.71,
+        "p75": 5.0,
+        "p90": 6.0,
+        "p95": 6.0,
+        "p99": 8.0,
+        "max": 11.0
+      },
+      "s2_match_stats": {
+        "count": 2206821,
+        "min": 0.0,
+        "p10": 0.0,
+        "p25": 1.0,
+        "median": 2.0,
+        "mean": 1.67,
+        "std": 1.11,
+        "p75": 2.0,
+        "p90": 3.0,
+        "p95": 4.0,
+        "p99": 5.0,
+        "max": 5.0
+      },
+      "s3_match_stats": {
+        "count": 2206821,
+        "min": 0.0,
+        "p10": 0.0,
+        "p25": 1.0,
+        "median": 2.0,
+        "mean": 1.79,
+        "std": 1.17,
+        "p75": 3.0,
+        "p90": 3.0,
+        "p95": 4.0,
+        "p99": 5.0,
+        "max": 6.0
+      },
+      "total_s2_links": 3693619,
+      "total_s3_links": 3944746,
+      "s2_vs_s3_match_breakdown": {
+        "s2_only": {
+          "count": 143029,
+          "pct": 6.48
+        },
+        "s3_only": {
+          "count": 164498,
+          "pct": 7.45
+        },
+        "both_s2_and_s3": {
+          "count": 1776047,
+          "pct": 80.48
+        },
+        "neither_singletons": {
+          "count": 123247,
+          "pct": 5.58
+        }
+      },
+      "target_id_validity": {
+        "invalid_s2_ids": 0,
+        "invalid_s3_ids": 0,
+        "other_invalid_ids": 0
+      },
+      "profile_time_sec": 8.37
+    }
+  },
+  "ground_truth": {
+    "file_name": "train_ground_truth.tsv",
+    "file_size_mb": 121.13,
+    "row_count": 2206821,
+    "columns": [
+      "source1_entity_id",
+      "matched_entity_ids"
+    ],
+    "s1_in_gt_count": 2206821,
+    "missing_s1_from_gt": 0,
+    "extra_s1_in_gt": 0,
+    "singleton_count": 123247,
+    "singleton_pct": 5.58,
+    "total_matched_s1_count": 2083574,
+    "total_matched_s1_pct": 94.42,
+    "match_count_distribution": {
+      "0 (singleton)": {
+        "count": 123247,
+        "pct": 5.58
+      },
+      "1": {
+        "count": 119157,
+        "pct": 5.4
+      },
+      "2": {
+        "count": 375212,
+        "pct": 17.0
+      },
+      "3": {
+        "count": 530841,
+        "pct": 24.05
+      },
+      "4": {
+        "count": 484115,
+        "pct": 21.94
+      },
+      "5+": {
+        "count": 574249,
+        "pct": 26.02
+      }
+    },
+    "match_count_stats": {
+      "count": 2206821,
+      "min": 0.0,
+      "p10": 1.0,
+      "p25": 2.0,
+      "median": 3.0,
+      "mean": 3.46,
+      "std": 1.71,
+      "p75": 5.0,
+      "p90": 6.0,
+      "p95": 6.0,
+      "p99": 8.0,
+      "max": 11.0
+    },
+    "s2_match_stats": {
+      "count": 2206821,
+      "min": 0.0,
+      "p10": 0.0,
+      "p25": 1.0,
+      "median": 2.0,
+      "mean": 1.67,
+      "std": 1.11,
+      "p75": 2.0,
+      "p90": 3.0,
+      "p95": 4.0,
+      "p99": 5.0,
+      "max": 5.0
+    },
+    "s3_match_stats": {
+      "count": 2206821,
+      "min": 0.0,
+      "p10": 0.0,
+      "p25": 1.0,
+      "median": 2.0,
+      "mean": 1.79,
+      "std": 1.17,
+      "p75": 3.0,
+      "p90": 3.0,
+      "p95": 4.0,
+      "p99": 5.0,
+      "max": 6.0
+    },
+    "total_s2_links": 3693619,
+    "total_s3_links": 3944746,
+    "s2_vs_s3_match_breakdown": {
+      "s2_only": {
+        "count": 143029,
+        "pct": 6.48
+      },
+      "s3_only": {
+        "count": 164498,
+        "pct": 7.45
+      },
+      "both_s2_and_s3": {
+        "count": 1776047,
+        "pct": 80.48
+      },
+      "neither_singletons": {
+        "count": 123247,
+        "pct": 5.58
+      }
+    },
+    "target_id_validity": {
+      "invalid_s2_ids": 0,
+      "invalid_s3_ids": 0,
+      "other_invalid_ids": 0
+    },
+    "profile_time_sec": 8.37
+  },
+  "shifts": {
+    "total_train_records": 12527040,
+    "total_test_records": 11702133,
+    "train_country_counts": {
+      "India": 5016534,
+      "US": 7510506
+    },
+    "train_country_pct": {
+      "India": 40.05,
+      "US": 59.95
+    },
+    "test_country_counts": {
+      "India": 5527551,
+      "France": 1694445,
+      "US": 4480137
+    },
+    "test_country_pct": {
+      "India": 47.24,
+      "France": 14.48,
+      "US": 38.28
+    },
+    "france_in_train": 0,
+    "france_in_test": 1694445,
+    "france_test_pct": 14.48,
+    "entity_id_overlap_count": 0,
+    "unique_train_names": 9387251,
+    "unique_test_names": 8971579,
+    "name_overlap_count": 685885,
+    "name_overlap_pct_of_test": 7.65,
+    "analysis_time_sec": 25.03
+  },
+  "noise_patterns": {
+    "exact_matches": [
+      {
+        "s1_id": "S1-258707613",
+        "matched_id": "S2-128630836",
+        "country": "US",
+        "name": "PV Electronics LLC",
+        "address": "5492 Wilson Way, Coolidge, AZ"
+      },
+      {
+        "s1_id": "S1-754529828",
+        "matched_id": "S2-579400601",
+        "country": "US",
+        "name": "Cardiology Physicians of Union",
+        "address": "6421 Wayne Street, Union, IL"
+      },
+      {
+        "s1_id": "S1-434701903",
+        "matched_id": "S2-598815814",
+        "country": "US",
+        "name": "Liberty News",
+        "address": "7649 Courthouse Road, Spotsylvania County, VA"
+      },
+      {
+        "s1_id": "S1-605905957",
+        "matched_id": "S2-825262237",
+        "country": "US",
+        "name": "Advanced Education Technologies LLC",
+        "address": "540 Washington, Lander, WY"
+      },
+      {
+        "s1_id": "S1-677688924",
+        "matched_id": "S2-473238965",
+        "country": "US",
+        "name": "Lumon Finance",
+        "address": "15 Swanwick Place, Tomball, TX"
+      }
+    ],
+    "abbreviation_variations": [
+      {
+        "s1_id": "S1-313221336",
+        "matched_id": "S3-872559960",
+        "country": "US",
+        "abbrev_found": "DR <-> DRIVE",
+        "s1_name": "Studio 74 Book Store",
+        "matched_name": "Studio 74 BOOK Store",
+        "s1_address": "2628 Mariposa Drive, Terre Haute, IN",
+        "matched_address": "Indiana, 02628 Mariposa Dr, Terre Ahute"
+      },
+      {
+        "s1_id": "S1-516394603",
+        "matched_id": "S2-642842175",
+        "country": "US",
+        "abbrev_found": "RD <-> ROAD",
+        "s1_name": "Bay Creative Stone LLC",
+        "matched_name": "Bay Creative Sthoen LLC",
+        "s1_address": "4018 Annapolis Road, Unit APARTMENT B, Halethorpe, MD",
+        "matched_address": "4018- Annapolis Rd, HALETHORPE, MD"
+      },
+      {
+        "s1_id": "S1-241438014",
+        "matched_id": "S3-828994416",
+        "country": "US",
+        "abbrev_found": "DR <-> DRIVE",
+        "s1_name": "Evans Pediatrics",
+        "matched_name": "Evans  (Pediatrics)",
+        "s1_address": "1600 2nd West Hill Drive, Great Falls, MT",
+        "matched_address": "1600 2nd West Hill Dr, Great Falls, Montana"
+      },
+      {
+        "s1_id": "S1-528651403",
+        "matched_id": "S3-7289261",
+        "country": "US",
+        "abbrev_found": "RD <-> ROAD",
+        "s1_name": "Aloysia Damico Generation Inc",
+        "matched_name": "Aloysia Generation Damico Inc",
+        "s1_address": "2337 Pendragon Road, Kingsport, TN",
+        "matched_address": "##2337 Pendragon Rd, Kingsport, Tennessee"
+      },
+      {
+        "s1_id": "S1-815044399",
+        "matched_id": "S3-294159911",
+        "country": "US",
+        "abbrev_found": "RD <-> ROAD",
+        "s1_name": "Henderson Federal Sciences Inc",
+        "matched_name": "Henderson Féderal",
+        "s1_address": "1522 E 7th Road, Lostant, IL",
+        "matched_address": "1522 East 7nd Rd, Lostant, Illinois"
+      }
+    ],
+    "typo_variations": [
+      {
+        "s1_id": "S1-783955316",
+        "matched_id": "S3-656241763",
+        "country": "India",
+        "s1_name": "Kisan Avas Ltd",
+        "matched_name": "Kisan Avas Ltd.",
+        "diff_count": 1
+      },
+      {
+        "s1_id": "S1-516394603",
+        "matched_id": "S2-642842175",
+        "country": "US",
+        "s1_name": "Bay Creative Stone LLC",
+        "matched_name": "Bay Creative Sthoen LLC",
+        "diff_count": 1
+      },
+      {
+        "s1_id": "S1-214543067",
+        "matched_id": "S2-416909923",
+        "country": "US",
+        "s1_name": "Nieto Algonquin LLC",
+        "matched_name": "Nieto Álgonquin LLC",
+        "diff_count": 2
+      },
+      {
+        "s1_id": "S1-180257062",
+        "matched_id": "S3-618488662",
+        "country": "US",
+        "s1_name": "Alexandria Hunger Rapid League",
+        "matched_name": "Alexandria  Hunger Rapid League",
+        "diff_count": 1
+      },
+      {
+        "s1_id": "S1-863944743",
+        "matched_id": "S3-69555495",
+        "country": "US",
+        "s1_name": "Brode Physical Therapy Inc",
+        "matched_name": "Brode Physical Therapy Inc.",
+        "diff_count": 1
+      }
+    ],
+    "reordered_names": [
+      {
+        "s1_id": "S1-783955316",
+        "matched_id": "S3-656241763",
+        "country": "India",
+        "s1_name": "Kisan Avas Ltd",
+        "matched_name": "Kisan Avas Ltd.",
+        "s1_address": "6/161 S 2, Rajender Nagar, Ghaziabad, Uttar Pradesh",
+        "matched_address": "उत्तर प्रदेश, 7/161 S 2, Ghaziabad"
+      },
+      {
+        "s1_id": "S1-21082318",
+        "matched_id": "S2-234787766",
+        "country": "US",
+        "s1_name": "Eye Clinic LLC",
+        "matched_name": "LLC Eye Clinic",
+        "s1_address": "2475 Pecos Road, Unit 2098, Chandler, AZ",
+        "matched_address": "2475 Pecos Road, ANDERSEN SPRINGS, AZ"
+      },
+      {
+        "s1_id": "S1-180257062",
+        "matched_id": "S3-618488662",
+        "country": "US",
+        "s1_name": "Alexandria Hunger Rapid League",
+        "matched_name": "Alexandria  Hunger Rapid League",
+        "s1_address": "1821 Aga Drive, Alexandria, MN",
+        "matched_address": "1821. Aga Drive, Aelxandria, Minnesota"
+      },
+      {
+        "s1_id": "S1-241438014",
+        "matched_id": "S3-828994416",
+        "country": "US",
+        "s1_name": "Evans Pediatrics",
+        "matched_name": "Evans  (Pediatrics)",
+        "s1_address": "1600 2nd West Hill Drive, Great Falls, MT",
+        "matched_address": "1600 2nd West Hill Dr, Great Falls, Montana"
+      },
+      {
+        "s1_id": "S1-61084401",
+        "matched_id": "S3-905700617",
+        "country": "US",
+        "s1_name": "Urology Horizon Health LLC",
+        "matched_name": "*** UROLOGY HORIZON HEALTH LLC",
+        "s1_address": "Sunset, AR, 4120 Highway 77",
+        "matched_address": "#4120 Highway 77, Marion, Arkansas"
+      }
+    ],
+    "legal_suffix_variations": [
+      {
+        "s1_id": "S1-151440370",
+        "matched_id": "S2-918927342",
+        "country": "India",
+        "s1_name": "Shlok Electronics Pvt Ltd",
+        "matched_name": "SHLOK ELECTRONICS",
+        "s1_suffixes": [
+          "LTD",
+          "PVT"
+        ],
+        "matched_suffixes": []
+      },
+      {
+        "s1_id": "S1-188088618",
+        "matched_id": "S2-436753046",
+        "country": "US",
+        "s1_name": "Wallace, Zhang & Concepcion Co",
+        "matched_name": "WALLACE, ZHANG & CONCEPCION",
+        "s1_suffixes": [
+          "CO"
+        ],
+        "matched_suffixes": []
+      },
+      {
+        "s1_id": "S1-768427336",
+        "matched_id": "S2-204672167",
+        "country": "US",
+        "s1_name": "3796 Third St Properties",
+        "matched_name": "3796 THIRD ST PROPERTIES INC",
+        "s1_suffixes": [],
+        "matched_suffixes": [
+          "INC"
+        ]
+      },
+      {
+        "s1_id": "S1-481118017",
+        "matched_id": "S3-831061417",
+        "country": "India",
+        "s1_name": "VC Entertainment Private Limited",
+        "matched_name": "VC Entertainment Private Ltd",
+        "s1_suffixes": [
+          "PRIVATE",
+          "LIMITED"
+        ],
+        "matched_suffixes": [
+          "PRIVATE",
+          "LTD"
+        ]
+      },
+      {
+        "s1_id": "S1-647436953",
+        "matched_id": "S3-587570117",
+        "country": "India",
+        "s1_name": "Improve Medical Centre",
+        "matched_name": "Improve Medical Centre Limited",
+        "s1_suffixes": [],
+        "matched_suffixes": [
+          "LIMITED"
+        ]
+      }
+    ],
+    "address_variations": [
+      {
+        "s1_id": "S1-341462203",
+        "matched_id": "S2-219553948",
+        "country": "India",
+        "s1_address": "37-90 Squaradeal, Defence Colony Sainikapuri, Secunderabad, Hyderabad, Telangana",
+        "matched_address": "NO 37-90 SQUARADEAL, DEFENCE COLONY SAINIKAPURI, SECUNDERABAD, Andhra Pradesh"
+      },
+      {
+        "s1_id": "S1-783955316",
+        "matched_id": "S3-656241763",
+        "country": "India",
+        "s1_address": "6/161 S 2, Rajender Nagar, Ghaziabad, Uttar Pradesh",
+        "matched_address": "उत्तर प्रदेश, 7/161 S 2, Ghaziabad"
+      },
+      {
+        "s1_id": "S1-313221336",
+        "matched_id": "S3-872559960",
+        "country": "US",
+        "s1_address": "2628 Mariposa Drive, Terre Haute, IN",
+        "matched_address": "Indiana, 02628 Mariposa Dr, Terre Ahute"
+      },
+      {
+        "s1_id": "S1-516394603",
+        "matched_id": "S2-642842175",
+        "country": "US",
+        "s1_address": "4018 Annapolis Road, Unit APARTMENT B, Halethorpe, MD",
+        "matched_address": "4018- Annapolis Rd, HALETHORPE, MD"
+      },
+      {
+        "s1_id": "S1-887045319",
+        "matched_id": "S2-612158384",
+        "country": "India",
+        "s1_address": "H.No1-8-67/P Apiic Kamalanagar, Kushaiguda, Hyderabad, Rangareddy, Telangana",
+        "matched_address": "#1-8-67/P APIIC KAMALANAGAR, KUSHAIGUDA, RANGAREDDY, Telangana"
+      }
+    ],
+    "transliteration_examples": [
+      {
+        "s1_id": "S1-151440370",
+        "matched_id": "S2-918927342",
+        "country": "India",
+        "pattern": "sh <-> s",
+        "s1_name": "Shlok Electronics Pvt Ltd",
+        "matched_name": "SHLOK ELECTRONICS",
+        "s1_address": "S. No. 192/5, Office 03, Arambh, Nr. Datta Mandir, Pune, Maharashtra",
+        "matched_address": "S. NO. 192/5, OFFICE 03, ARAMBH, NR. DATTA MANDIR, PUNE, Maharashtra"
+      },
+      {
+        "s1_id": "S1-917187968",
+        "matched_id": "S3-293956815",
+        "country": "India",
+        "pattern": "sh <-> s",
+        "s1_name": "Shyambaba Hospitality Pvt Ltd",
+        "matched_name": "Shyambaba  Hospitality Pvt",
+        "s1_address": "B-1/3 Emca House289 S B S Marg Fort, Mumbai, Maharashtra",
+        "matched_address": "Greater Mumbai, महाराष्ट्र, Mumbai, B-1/3 Emca House289 S B S Marg Fort"
+      },
+      {
+        "s1_id": "S1-991782809",
+        "matched_id": "S3-408699026",
+        "country": "India",
+        "pattern": "v <-> w",
+        "s1_name": "Perambur Purasawalkam Print Private Limited",
+        "matched_name": "Perambur Purasawalkam Print Private  Limited",
+        "s1_address": "No.29, Ga, Ground Floor, Pgp Manor Apartment, Barnaby Road, Perambur Purasawalkam, Chennai, Tamil Nadu",
+        "matched_address": "#29, Chennai, TN"
+      },
+      {
+        "s1_id": "S1-310938186",
+        "matched_id": "S2-89138628",
+        "country": "India",
+        "pattern": "v <-> w",
+        "s1_name": "New Delhi Technology Private Limited",
+        "matched_name": "NEW  DELHI TECHNOLOGY PRIVATE",
+        "s1_address": "H.N.172 V & P.O. Kushakhiranki, New Delhi, North Delhi, Delhi",
+        "matched_address": "H.N.##172 V & P.O. KUSHAKHIRANKI, NEW DEHLI, Delhi"
+      },
+      {
+        "s1_id": "S1-808597184",
+        "matched_id": "S3-230543331",
+        "country": "India",
+        "pattern": "sh <-> s",
+        "s1_name": "Shyam Systems Private Limited",
+        "matched_name": "Smt shyamsystems.com",
+        "s1_address": "No 42, 4Th Cross Street, Ezhil Nagar Phase -2, Ayyapakkam, Chennai, Tamil Nadu",
+        "matched_address": "H.no 42, Chennai, TN"
+      }
+    ],
+    "missing_address_components": [
+      {
+        "s1_id": "S1-239984662",
+        "matched_id": "S3-967922818",
+        "country": "US",
+        "s1_address": "155 Federal Street, Greenfield, MA",
+        "matched_address": "155 Federal Street, Greenfield, Massachusetts",
+        "ratio": 0.76
+      },
+      {
+        "s1_id": "S1-762323602",
+        "matched_id": "S2-905533666",
+        "country": "India",
+        "s1_address": "1 Chintamani Apartments No 38/2 Madhuban Colony, Pune, Maharashtra",
+        "matched_address": "PUNE, DOOR NO 1 CHINTAMANI APARTMENTS NO 38/2 MADHUBAN COLONY, PUNE, Maharashtra",
+        "ratio": 0.82
+      },
+      {
+        "s1_id": "S1-52402650",
+        "matched_id": "S2-826360573",
+        "country": "India",
+        "s1_address": "J-211, Saket, Delhi, New Delhi",
+        "matched_address": "J-211, SAKET, Delhi",
+        "ratio": 0.63
+      },
+      {
+        "s1_id": "S1-931382952",
+        "matched_id": "S2-148180124",
+        "country": "India",
+        "s1_address": "C/O Kamlesh Kumar, Village Naugawan Khulauli, Post Kant, Shahjahanpur, Uttar Pradesh",
+        "matched_address": "BLOCK A-219 C/O KAMLESH KUMAR, VILLAGE NAUGAWAN KHULAULI, POST KANT, SHAHJAHANPUR, Uttar Pradesh",
+        "ratio": 0.88
+      },
+      {
+        "s1_id": "S1-832766797",
+        "matched_id": "S2-876524952",
+        "country": "India",
+        "s1_address": "H.No. A-608 Aura Biplex, Opp Dattani Nagar, Borivali West, Mumbai, Maharashtra",
+        "matched_address": "PLOT B3/73 H.NO. A-608 AURA BIPLEX, OPP DATTANI NAGAR, BORIVALI WEST, MUMBAI, Maharashtra",
+        "ratio": 0.88
+      }
+    ],
+    "ambiguous_businesses": [
+      {
+        "business_name": "b+ retail inc",
+        "instance_count": 4,
+        "instances": [
+          {
+            "entity_id": "S1-377745466",
+            "address": "1712 Montebello Avenue, Phoenix, AZ",
+            "country": "US"
+          },
+          {
+            "entity_id": "S1-855081333",
+            "address": "301 Grover Street, Deep River, IA",
+            "country": "US"
+          },
+          {
+            "entity_id": "S1-810976399",
+            "address": "30270 Cutlers Court Road, Accomack County, VA",
+            "country": "US"
+          }
+        ]
+      },
+      {
+        "business_name": "christ chapel",
+        "instance_count": 5,
+        "instances": [
+          {
+            "entity_id": "S1-133037285",
+            "address": "2100 Cameron Drive, Unit APARTMENT G, Dundalk, MD",
+            "country": "US"
+          },
+          {
+            "entity_id": "S1-671634732",
+            "address": "330 Fairmount Drive, Madison, IN",
+            "country": "US"
+          },
+          {
+            "entity_id": "S1-393138020",
+            "address": "3282 Malcolm Road, Brandywine, MD",
+            "country": "US"
+          }
+        ]
+      },
+      {
+        "business_name": "consulting nyasa nursing private limited",
+        "instance_count": 5,
+        "instances": [
+          {
+            "entity_id": "S1-785847572",
+            "address": "2505, Tower 1, Oakwood, Runwal Greens, Mulund Goreagon Link Road, Near Fortis Hospital, Bhandup West, Mumbai, Maharashtra",
+            "country": "India"
+          },
+          {
+            "entity_id": "S1-6713645",
+            "address": "Plot No.1098/100, Mudliyar Layout, Nagpur, Maharashtra",
+            "country": "India"
+          },
+          {
+            "entity_id": "S1-837574514",
+            "address": "Solitaire Corporate Park, Building No. 1, Unit 152, 5Th Floor, Andheri Ghatkoper Link Road, C, Hakala, Andheri East, Mumbai City, Maharashtra",
+            "country": "India"
+          }
+        ]
+      },
+      {
+        "business_name": "nexus anchor rain",
+        "instance_count": 4,
+        "instances": [
+          {
+            "entity_id": "S1-27541239",
+            "address": "1111 Church Street, Unit 2007, Nashville, TN",
+            "country": "US"
+          },
+          {
+            "entity_id": "S1-829623102",
+            "address": "276 Main Street, Bostic, NC",
+            "country": "US"
+          },
+          {
+            "entity_id": "S1-405265106",
+            "address": "Long Beach, NY, 255 Grand Boulevard",
+            "country": "US"
+          }
+        ]
+      },
+      {
+        "business_name": "dream construction limited",
+        "instance_count": 5,
+        "instances": [
+          {
+            "entity_id": "S1-564729135",
+            "address": "H.No.16-11-23/37/A, 2Nd Floor, Flat No.207, Sagar Hotel Building, Opp.Rta Office, Mo, Osarambagh, Hyderabad, Telangana",
+            "country": "India"
+          },
+          {
+            "entity_id": "S1-972928178",
+            "address": "D.No. 8-3-229/D/1/42, Plot No. 84, 3Rd Floor, Sravanthi Nagar, Venkatagiri Colony, You, Sufguda, Hyderabad, Telangana",
+            "country": "India"
+          },
+          {
+            "entity_id": "S1-449531128",
+            "address": "911 A Wing, The Capital G - Block Bandra Kurla Complex, Behind Icici Bank, Mumbai, Mumbai City, Maharashtra",
+            "country": "India"
+          }
+        ]
+      }
+    ]
+  }
+}
