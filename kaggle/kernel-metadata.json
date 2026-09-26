@@ -1,0 +1,17 @@
+{
+  "id": "bhanupratapsinghdeo/ml-challenge-entity-resolution-pipeline",
+  "title": "ML Challenge Entity Resolution Pipeline",
+  "code_file": "kaggle_pipeline.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "satwiksps/amazon-ml-challenge-2026"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}
