@@ -1,7 +1,7 @@
 {
-  "id": "bhanupratapsinghdeo/ml-challenge-entity-resolution-pipeline",
-  "title": "ML Challenge Entity Resolution Pipeline",
-  "code_file": "kaggle_pipeline.ipynb",
+  "id": "bhanupratapsinghdeo/ml-challenge-smoke-test",
+  "title": "ML Challenge Smoke Test",
+  "code_file": "main.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": "true",

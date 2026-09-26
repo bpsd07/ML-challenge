@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "all_targets_found": true,
+  "found_files": {
+    "validate_submission.py": "/kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/validate_submission.py",
+    "test_source2.tsv": "/kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source2.tsv",
+    "test_source3.tsv": "/kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source3.tsv",
+    "test_source1.tsv": "/kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source1.tsv",
+    "train_ground_truth.tsv": "/kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_ground_truth.tsv",
+    "train_source3.tsv": "/kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source3.tsv",
+    "train_source2.tsv": "/kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source2.tsv",
+    "train_source1.tsv": "/kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source1.tsv"
+  },
+  "ram_total_gb": 31.34774398803711,
+  "ram_avail_gb": 30.035194396972656,
+  "cpu_count": 4,
+  "gpu_available": false,
+  "gpu_name": "None (CPU Mode)",
+  "gpu_memory": "N/A"
+}

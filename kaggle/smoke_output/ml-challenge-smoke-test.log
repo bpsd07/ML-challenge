@@ -1,0 +1,66 @@
+[{"stream_name":"stderr","time":8.783987044,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":8.784073151,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":10.14214576,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.142182519,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.142188069,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.142192427,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":11.131622733,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":11.131659975,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":11.131666583,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":11.131670865,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":26.085290736,"data":"=== SYSTEM \u0026 RUNTIME SPECIFICATIONS ===\n"}
+,{"stream_name":"stdout","time":26.085365026,"data":"Python Version: 3.12.13 (main, Mar  4 2026, 09:23:07) [GCC 11.4.0]\n"}
+,{"stream_name":"stdout","time":26.0853721,"data":"Platform: Linux-6.12.90+-x86_64-with-glibc2.35\n"}
+,{"stream_name":"stdout","time":26.085377654,"data":"CPU Count (Logical): 4\n"}
+,{"stream_name":"stdout","time":26.085382616,"data":"CPU Count (Physical): 2\n"}
+,{"stream_name":"stdout","time":26.085393223,"data":"RAM Total: 31.35 GB\n"}
+,{"stream_name":"stdout","time":26.085398617,"data":"RAM Available: 30.04 GB\n"}
+,{"stream_name":"stdout","time":26.085403498,"data":"Polars Version: 1.35.2\n"}
+,{"stream_name":"stdout","time":26.085408778,"data":"LightGBM Version: 4.6.0\n"}
+,{"stream_name":"stdout","time":26.085413547,"data":"PyTorch Version: 2.10.0+cpu\n"}
+,{"stream_name":"stdout","time":26.085418485,"data":"GPU Available: False\n"}
+,{"stream_name":"stdout","time":26.085423287,"data":"GPU Device: None (CPU Mode)\n"}
+,{"stream_name":"stdout","time":26.08542798,"data":"GPU Total Memory: N/A\n"}
+,{"stream_name":"stdout","time":26.163170493,"data":"=== DISCOVERING DATASETS IN /kaggle/input ===\n"}
+,{"stream_name":"stdout","time":26.163209025,"data":"Found: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/validate_submission.py (0.01 MB)\n"}
+,{"stream_name":"stdout","time":26.163238066,"data":"Found: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source2.tsv (485.86 MB)\n"}
+,{"stream_name":"stdout","time":26.163244122,"data":"Found: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source3.tsv (482.56 MB)\n"}
+,{"stream_name":"stdout","time":26.163249118,"data":"Found: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source1.tsv (166.91 MB)\n"}
+,{"stream_name":"stdout","time":26.163254923,"data":"Found: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_ground_truth.tsv (121.13 MB)\n"}
+,{"stream_name":"stdout","time":26.163259942,"data":"Found: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source3.tsv (480.37 MB)\n"}
+,{"stream_name":"stdout","time":26.16328731,"data":"Found: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source2.tsv (466.63 MB)\n"}
+,{"stream_name":"stdout","time":26.163292005,"data":"Found: /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source1.tsv (200.34 MB)\n"}
+,{"stream_name":"stdout","time":26.163296378,"data":"\n"}
+,{"stream_name":"stdout","time":26.16330011,"data":"Target File Resolution Summary:\n"}
+,{"stream_name":"stdout","time":26.163304006,"data":"  train_source1.tsv         -\u003e /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source1.tsv\n"}
+,{"stream_name":"stdout","time":26.163308062,"data":"  train_source2.tsv         -\u003e /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source2.tsv\n"}
+,{"stream_name":"stdout","time":26.163312493,"data":"  train_source3.tsv         -\u003e /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_source3.tsv\n"}
+,{"stream_name":"stdout","time":26.163316305,"data":"  train_ground_truth.tsv    -\u003e /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/train/train_ground_truth.tsv\n"}
+,{"stream_name":"stdout","time":26.163320449,"data":"  test_source1.tsv          -\u003e /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source1.tsv\n"}
+,{"stream_name":"stdout","time":26.163324721,"data":"  test_source2.tsv          -\u003e /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source2.tsv\n"}
+,{"stream_name":"stdout","time":26.163328998,"data":"  test_source3.tsv          -\u003e /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/dataset/test/test_source3.tsv\n"}
+,{"stream_name":"stdout","time":26.163332943,"data":"  validate_submission.py    -\u003e /kaggle/input/datasets/satwiksps/amazon-ml-challenge-2026/validate_submission.py\n"}
+,{"stream_name":"stdout","time":26.163336784,"data":"\n"}
+,{"stream_name":"stdout","time":26.163340112,"data":"All Target Files Found: True\n"}
+,{"stream_name":"stdout","time":26.179061271,"data":"=== CREATING STANDARD KAGGLE WORKING DIRECTORY ===\n"}
+,{"stream_name":"stdout","time":26.179100382,"data":"Created: /kaggle/working/business_er/src\n"}
+,{"stream_name":"stdout","time":26.179107026,"data":"Created: /kaggle/working/business_er/checkpoints\n"}
+,{"stream_name":"stdout","time":26.179111204,"data":"Created: /kaggle/working/business_er/cache\n"}
+,{"stream_name":"stdout","time":26.179115649,"data":"Created: /kaggle/working/business_er/features\n"}
+,{"stream_name":"stdout","time":26.1791197,"data":"Created: /kaggle/working/business_er/candidates\n"}
+,{"stream_name":"stdout","time":26.179123325,"data":"Created: /kaggle/working/business_er/models\n"}
+,{"stream_name":"stdout","time":26.179126977,"data":"Created: /kaggle/working/business_er/reports\n"}
+,{"stream_name":"stdout","time":26.179130804,"data":"Created: /kaggle/working/business_er/output\n"}
+,{"stream_name":"stdout","time":26.179134624,"data":"Created: /kaggle/working/business_er/logs\n"}
+,{"stream_name":"stdout","time":26.179138488,"data":"\n"}
+,{"stream_name":"stdout","time":26.179142271,"data":"Smoke test checkpoint saved to: /kaggle/working/business_er/checkpoints/smoke_test_passed.json\n"}
+,{"stream_name":"stdout","time":26.179146533,"data":"=== SMOKE TEST COMPLETED SUCCESSFULLY ===\n"}
+,{"stream_name":"stderr","time":31.647015683,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":31.647066006,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":31.877127606,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":31.877162618,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":32.655284152,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":33.068316358,"data":"[NbConvertApp] Writing 10941 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":36.301937236,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":37.417902466,"data":"[NbConvertApp] Writing 294952 bytes to __results__.html\n"}
+]
