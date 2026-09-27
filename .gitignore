@@ -55,5 +55,6 @@ student_resource/dataset/
 
 # Kaggle temporary logs and download staging
 kaggle/error_logs*/
+kaggle/error_stage3*/
 kaggle/results_*/
 kaggle/test_poll/

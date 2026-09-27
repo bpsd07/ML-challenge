@@ -197,7 +197,7 @@ def main():
     neg_count_train = 0
     neg_types = Counter()
 
-    BATCH_SIZE = 5000
+    BATCH_SIZE = 2500
     n_train_batches = (len(train_s1_ids) + BATCH_SIZE - 1) // BATCH_SIZE
 
     for batch_i in range(n_train_batches):
@@ -220,25 +220,35 @@ def main():
 
             cands, strat_map = blocker.query_s1_entity(s1_n_norm, s1_a_norm, cntry)
 
-            cand_votes = defaultdict(int)
-            cand_strats = defaultdict(set)
+            # Fast vote counting with Counter
+            cand_votes = Counter()
             for strat, clist in strat_map.items():
-                for c in clist:
-                    cand_votes[c] += 1
-                    cand_strats[c].add(strat)
+                cand_votes.update(clist)
 
-            sorted_cands = sorted(cands, key=lambda c: cand_votes[c], reverse=True)
-            cand_ranks = {c: r + 1 for r, c in enumerate(sorted_cands)}
+            top_cands_votes = cand_votes.most_common(50)
+            top_cands = [c for c, _ in top_cands_votes]
+            cand_ranks = {c: r + 1 for r, c in enumerate(top_cands)}
 
             # True positives
-            pos_cands = [tc for tc in gt_links if tc in cands]
+            pos_cands = [tc for tc in gt_links if tc in cand_votes]
 
-            # Hard negatives: top-5 by votes + sample from top-100
-            non_gt_cands = [c for c in sorted_cands if c not in gt_links]
+            # Hard negatives: top candidates by votes not in GT
+            non_gt_cands = [c for c in top_cands if c not in gt_links]
             selected_negs = non_gt_cands[:12]
 
-            batch_needed_cands.update(pos_cands)
-            batch_needed_cands.update(selected_negs)
+            chosen_cands = set(pos_cands) | set(selected_negs)
+
+            # Store blocker signals ONLY for chosen candidates (~14 per entity) to avoid OOM
+            entity_cand_strats = {c: set() for c in chosen_cands}
+            entity_cand_votes = {c: cand_votes[c] for c in chosen_cands}
+            entity_cand_ranks = {c: cand_ranks.get(c, 100) for c in chosen_cands}
+
+            for strat, clist in strat_map.items():
+                for c in clist:
+                    if c in entity_cand_strats:
+                        entity_cand_strats[c].add(strat)
+
+            batch_needed_cands.update(chosen_cands)
 
             batch_s1_queries.append({
                 "sid": sid,
@@ -247,9 +257,9 @@ def main():
                 "cntry": cntry,
                 "pos_cands": pos_cands,
                 "neg_cands": selected_negs,
-                "cand_votes": cand_votes,
-                "cand_ranks": cand_ranks,
-                "cand_strats": cand_strats
+                "cand_votes": entity_cand_votes,
+                "cand_ranks": entity_cand_ranks,
+                "cand_strats": entity_cand_strats
             })
 
         # Step 2: Fetch and normalize metadata for only this batch's needed candidates
@@ -317,7 +327,7 @@ def main():
     pos_count_val = 0
     neg_count_val = 0
 
-    VAL_BATCH_SIZE = 5000
+    VAL_BATCH_SIZE = 2500
     n_val_batches = (len(val_s1_ids) + VAL_BATCH_SIZE - 1) // VAL_BATCH_SIZE
 
     for v_batch_i in range(n_val_batches):
@@ -346,21 +356,29 @@ def main():
 
             cands, strat_map = blocker.query_s1_entity(s1_n_norm, s1_a_norm, cntry)
 
-            cand_votes = defaultdict(int)
-            cand_strats = defaultdict(set)
+            cand_votes = Counter()
             for strat, clist in strat_map.items():
-                for c in clist:
-                    cand_votes[c] += 1
-                    cand_strats[c].add(strat)
+                cand_votes.update(clist)
 
-            sorted_cands = sorted(cands, key=lambda c: cand_votes[c], reverse=True)
-            cand_ranks = {c: r + 1 for r, c in enumerate(sorted_cands)}
+            top_cands_votes = cand_votes.most_common(50)
+            top_cands = [c for c, _ in top_cands_votes]
+            cand_ranks = {c: r + 1 for r, c in enumerate(top_cands)}
 
             # Evaluate top 50 candidates by blocker votes + any true GT matches
-            eval_cands = set(sorted_cands[:50])
+            eval_cands = set(top_cands)
             for tc in gt_links:
-                if tc in cands:
+                if tc in cand_votes:
                     eval_cands.add(tc)
+
+            # Store blocker signals ONLY for evaluated candidates
+            entity_cand_strats = {c: set() for c in eval_cands}
+            entity_cand_votes = {c: cand_votes[c] for c in eval_cands}
+            entity_cand_ranks = {c: cand_ranks.get(c, 100) for c in eval_cands}
+
+            for strat, clist in strat_map.items():
+                for c in clist:
+                    if c in entity_cand_strats:
+                        entity_cand_strats[c].add(strat)
 
             v_needed_cands.update(eval_cands)
 
@@ -371,9 +389,9 @@ def main():
                 "cntry": cntry,
                 "gt_links": gt_links,
                 "eval_cands": eval_cands,
-                "cand_votes": cand_votes,
-                "cand_ranks": cand_ranks,
-                "cand_strats": cand_strats
+                "cand_votes": entity_cand_votes,
+                "cand_ranks": entity_cand_ranks,
+                "cand_strats": entity_cand_strats
             })
 
         # Fetch candidate metadata for this validation batch
@@ -417,8 +435,8 @@ def main():
     print(f"Validation Dataset Ready in {time.time() - t0_val:.2f}s:")
     print(f"  Total Pairs: {len(y_val):,} | Positives: {pos_count_val:,} | Negatives: {neg_count_val:,}")
 
-    # Free candidate dataframes now that training and validation feature sets are built
-    del df_s2, df_s3
+    # Free candidate dataframes and the entire blocker inverted index before LightGBM training
+    del df_s2, df_s3, blocker
     gc.collect()
 
     # =========================================================================
