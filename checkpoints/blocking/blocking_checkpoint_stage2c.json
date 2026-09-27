@@ -1,0 +1,35 @@
+{
+  "stage": "STAGE_2C_MULTISCRIPT_ADDRESS_OPTIMIZATION",
+  "status": "COMPLETED",
+  "timestamp": "2026-09-27T08:31:49Z",
+  "blocker_version": "Stage2C_Final_Optimized_Union",
+  "baseline_v9_strategies_count": 39,
+  "stage2c_new_strategies_count": 8,
+  "total_active_strategies_count": 47,
+  "pilot_a": {
+    "n_s1": 50000,
+    "total_true_links": 173429,
+    "v9_baseline_recall_pct": 95.1231,
+    "stage2c_recall_pct": 97.3153,
+    "delta_recall_gain": 2.1922,
+    "s2_recall_pct": 97.3349,
+    "s3_recall_pct": 97.297,
+    "mean_candidates": 11740.53,
+    "p95_candidates": 31522.0,
+    "p99_candidates": 43015.0,
+    "max_candidates": 76858
+  },
+  "pilot_b_independent": {
+    "n_s1": 50000,
+    "total_true_links": 173035,
+    "v9_baseline_recall_pct": 94.69,
+    "stage2c_recall_pct": 97.2745,
+    "delta_recall_gain": 2.5845,
+    "s2_recall_pct": 97.2325,
+    "s3_recall_pct": 97.3139,
+    "mean_candidates": 11644.38,
+    "p95_candidates": 31239.2,
+    "p99_candidates": 42902.0,
+    "max_candidates": 71259
+  }
+}

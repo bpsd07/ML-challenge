@@ -11,6 +11,7 @@ Includes:
 
 import re
 import unicodedata
+from collections import Counter
 from typing import Dict, List, Set, Tuple, Optional
 
 # Extended legal suffixes across US, India, and France
@@ -242,6 +243,74 @@ def transliterate_devanagari(text: str) -> str:
     return re.sub(r'\s+', ' ', out).strip()
 
 
+INDIC_BASES = {
+    'Bengali': 0x0980,
+    'Gurmukhi': 0x0A00,
+    'Gujarati': 0x0A80,
+    'Odia': 0x0B00,
+    'Tamil': 0x0B80,
+    'Telugu': 0x0C00,
+    'Kannada': 0x0C80,
+    'Malayalam': 0x0D00
+}
+
+
+def detect_script(text: str) -> str:
+    """Detect dominant script of text."""
+    if not text:
+        return "Latin"
+    counts = Counter()
+    for ch in text:
+        cp = ord(ch)
+        if 0x0900 <= cp <= 0x097F:
+            counts["Devanagari"] += 1
+        elif 0x0980 <= cp <= 0x09FF:
+            counts["Bengali"] += 1
+        elif 0x0A00 <= cp <= 0x0A7F:
+            counts["Gurmukhi"] += 1
+        elif 0x0A80 <= cp <= 0x0AFF:
+            counts["Gujarati"] += 1
+        elif 0x0B00 <= cp <= 0x0B7F:
+            counts["Odia"] += 1
+        elif 0x0B80 <= cp <= 0x0BFF:
+            counts["Tamil"] += 1
+        elif 0x0C00 <= cp <= 0x0C7F:
+            counts["Telugu"] += 1
+        elif 0x0C80 <= cp <= 0x0CFF:
+            counts["Kannada"] += 1
+        elif 0x0D00 <= cp <= 0x0D7F:
+            counts["Malayalam"] += 1
+        elif ch.isalpha():
+            counts["Latin"] += 1
+    if counts:
+        return counts.most_common(1)[0][0]
+    return "Latin"
+
+
+def transliterate_indic(text: str) -> str:
+    """
+    Universal Indic-to-Latin transliterator covering:
+    Devanagari, Bengali, Gurmukhi, Gujarati, Odia, Tamil, Telugu, Kannada, Malayalam.
+    Maps non-Devanagari Brahmic characters to Devanagari ISCII block, then executes
+    phonetic transliteration to Latin.
+    """
+    if not text:
+        return ""
+    dev_chars = []
+    for ch in text:
+        cp = ord(ch)
+        mapped = False
+        for name, base in INDIC_BASES.items():
+            if base <= cp <= base + 0x7F:
+                dev_chars.append(chr(0x0900 + (cp - base)))
+                mapped = True
+                break
+        if not mapped:
+            dev_chars.append(ch)
+    dev_text = ''.join(dev_chars)
+    return transliterate_devanagari(dev_text)
+
+
 def strip_domain_tld(text: str) -> Optional[str]:
     """
     Extract domain-stripped name representation for URL-like business names.
@@ -297,8 +366,20 @@ def extract_address_signatures(raw_address: str) -> Dict:
 
     clean = raw_address.lower().strip()
 
-    # 1. All numeric atoms (isolated digit sequences)
-    numeric_atoms = set(re.findall(r'\b\d+\b', clean))
+    # 1. All numeric atoms (isolated digit sequences) with zero-stripping
+    numeric_atoms = set()
+    for d in re.findall(r'\b\d+\b', clean):
+        numeric_atoms.add(d)
+        norm_d = d.lstrip('0')
+        if norm_d:
+            numeric_atoms.add(norm_d)
+
+    # Prefix-digit extractions (e.g. C-323 -> 323, A-95 -> 95, D/903 -> 903, #570 -> 570)
+    for pfx, num in re.findall(r'([a-z/#\-]+)(\d+)', clean):
+        numeric_atoms.add(num)
+        norm_num = num.lstrip('0')
+        if norm_num:
+            numeric_atoms.add(norm_num)
 
     # 2. Slash-aware numeric components (e.g. 80/28, 38/2, 1098/100, 4/524/2, 8-0/28, 192/5)
     slash_compounds = set()
@@ -307,8 +388,12 @@ def extract_address_signatures(raw_address: str) -> Dict:
         parts = [p for p in re.split(r'[/-]', sp) if p.isdigit()]
         if len(parts) >= 2:
             slash_compounds.add('_'.join(parts))
+            slash_compounds.add(''.join(parts))
             for p in parts:
                 numeric_atoms.add(p)
+                norm_p = p.lstrip('0')
+                if norm_p:
+                    numeric_atoms.add(norm_p)
 
     # 3. Alphanumeric house tokens (e.g., Pno-S-513, A-25, H.No G-755, #A-303, Door No 825, Noa4/524/2)
     house_tokens = set()
@@ -450,16 +535,19 @@ def normalize_business_name(raw_name: Optional[str], country: str = "US") -> Dic
         honorific_tokens = [t for t in h_alnum.split() if t and t.upper() not in LEGAL_SUFFIXES_LIST]
         honorific_distinctive = [t for t in honorific_tokens if t not in GENERIC_STOPWORDS and len(t) >= 2]
 
-    # Devanagari / Indic script handling
-    has_devanagari = any('\u0900' <= c <= '\u097f' for c in raw)
-    translit_raw = transliterate_devanagari(raw) if has_devanagari else ""
+    # Multi-script Indic transliteration & detection
+    has_indic = any(0x0900 <= ord(c) <= 0x0D7F for c in raw)
+    detected_script = detect_script(raw)
+    translit_raw = transliterate_indic(raw) if has_indic else ""
     translit_tokens = []
     translit_distinctive = []
+    translit_phonetic = []
     if translit_raw:
         t_clean = re.sub(r'[^a-z0-9\s]', ' ', translit_raw.lower())
         t_tokens = [t for t in t_clean.split() if t]
         translit_tokens = [t for t in t_tokens if t.upper() not in LEGAL_SUFFIXES_LIST]
         translit_distinctive = [t for t in translit_tokens if t not in GENERIC_STOPWORDS and len(t) >= 2]
+        translit_phonetic = [get_consonant_skeleton(t, country=country) for t in translit_distinctive]
 
     # Concatenated distinctive tokens (for matching against domain-stripped candidate names)
     concat_distinctive = "".join(distinctive_tokens) if len(distinctive_tokens) >= 2 else ""
@@ -486,12 +574,14 @@ def normalize_business_name(raw_name: Optional[str], country: str = "US") -> Dic
         "soundex_tokens": soundex_tokens,
         "name_abbrev_expanded": name_abbrev_expanded,
         "domain_clean": domain_clean,
+        "detected_script": detected_script,
         "name_no_honorific": honorific_clean,
         "no_honorific_tokens": honorific_tokens,
         "no_honorific_distinctive": honorific_distinctive,
         "name_transliterated": translit_raw,
         "transliterated_tokens": translit_tokens,
         "transliterated_distinctive": translit_distinctive,
+        "transliterated_phonetic": translit_phonetic,
         "name_concat_distinctive": concat_distinctive,
     }
 

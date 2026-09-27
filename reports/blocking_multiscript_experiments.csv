@@ -1,0 +1,6 @@
+progression_name,strategies_count,s2_recall_pct,s3_recall_pct,combined_recall_pct,true_matches_recovered,total_true_matches,incremental_links_gained,mean_candidates_per_s1,median_candidates,p90_candidates,p95_candidates,p99_candidates,max_candidates,runtime_sec
+V9_Baseline,39,94.6447,95.5717,95.1231,164971,173429,0,10004.96,8649.0,21543.4,25745.1,35812.1,55443,295.31
+V9_plus_Multiscript_Translit,42,96.0803,96.1338,96.1079,166679,173429,1708,10592.0,9265.5,22634.1,28723.0,38086.1,57860,374.47
+V9_plus_Multiscript_ZeroStrip,44,96.7285,96.7282,96.7283,167755,173429,1076,11005.26,9735.0,23519.4,29914.0,40668.2,76811,383.74
+V9_plus_Pure_Address_Routes,46,97.3349,97.297,97.3153,168773,173429,1018,11740.45,10874.5,25105.1,31522.0,43015.0,76858,394.79
+Stage2C_Final_Optimized_Union,47,97.3349,97.297,97.3153,168773,173429,0,11740.53,10874.5,25105.1,31522.0,43015.0,76858,393.76

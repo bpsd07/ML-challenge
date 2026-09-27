@@ -5,21 +5,21 @@ def build_self_contained_notebook():
     src_dir = Path("src")
     normalization_code = (src_dir / "normalization.py").read_text(encoding="utf-8")
     blocking_code = (src_dir / "blocking.py").read_text(encoding="utf-8")
-    eval_code = (src_dir / "evaluate_targeted_blocking.py").read_text(encoding="utf-8")
+    eval_code = (src_dir / "evaluate_stage2c_blocking.py").read_text(encoding="utf-8")
 
     cells = [
         {
             "cell_type": "markdown",
             "metadata": {},
             "source": [
-                "# Amazon Business Entity Resolution: Stage 2B Targeted Blocking Recall Recovery\n",
-                "### Objective: Recover Missed True Links (Target >=95% to >=99%) on Frozen Pilot B\n",
-                "- Target 3 primary failure modes accounting for 90% of misses: Address digit format, Devanagari script gap, house numbers.\n",
-                "- Evaluate V8 Baseline (B01 to B27) on Pilot A (50k S1) and frozen independent Pilot B (50k S1).\n",
-                "- Evaluate each of the 12 Targeted Blockers (TB01 to TB12) individually.\n",
+                "# Amazon Business Entity Resolution: Stage 2C Multi-Script & Address Recall Recovery\n",
+                "### Objective: Recover Dravidian/Bengali/Gujarati Scripts and Address Digit/Format Misses (Target >=97% to >=98%) on Frozen Pilot B\n",
+                "- Audit actual remaining scripts (Kannada, Telugu, Tamil, Bengali, Gujarati, Malayalam, Odia, Devanagari) across missed true links.\n",
+                "- Evaluate V9 Baseline (39 strategies) on Pilot A (50k S1) and frozen independent Pilot B (50k S1).\n",
+                "- Evaluate each of the 8 Stage 2C Targeted Blockers (SB01 to SB08) individually.\n",
                 "- Evaluate progressive combinations and final optimized blocker union.\n",
                 "- Validate on frozen independent Pilot B (seed=1337) against 10.3M candidate population.\n",
-                "- Export reports/blocking_targeted_experiments.csv, reports/blocking_targeted_miss_analysis.md, reports/blocking_targeted_optimization_report.md, and checkpoints/blocking/blocking_checkpoint_targeted.json."
+                "- Export reports/blocking_multiscript_experiments.csv, reports/blocking_multiscript_miss_analysis.md, reports/blocking_stage2c_optimization_report.md, and checkpoints/blocking/blocking_checkpoint_stage2c.json."
             ]
         },
         {
@@ -81,11 +81,11 @@ def build_self_contained_notebook():
             "metadata": {},
             "outputs": [],
             "source": [
-                "# Writing src/evaluate_targeted_blocking.py\n",
+                "# Writing src/evaluate_stage2c_blocking.py\n",
                 f"pipeline_code = {json.dumps(eval_code)}\n",
-                "with open(SRC_DIR / 'evaluate_targeted_blocking.py', 'w', encoding='utf-8') as f:\n",
+                "with open(SRC_DIR / 'evaluate_stage2c_blocking.py', 'w', encoding='utf-8') as f:\n",
                 "    f.write(pipeline_code)\n",
-                "print('Wrote evaluate_targeted_blocking.py successfully.')\n"
+                "print('Wrote evaluate_stage2c_blocking.py successfully.')\n"
             ]
         },
         {
@@ -94,11 +94,11 @@ def build_self_contained_notebook():
             "metadata": {},
             "outputs": [],
             "source": [
-                "print('=== EXECUTING STAGE 2B TARGETED BLOCKING OPTIMIZATION & PILOT B VALIDATION ===')\n",
-                "import evaluate_targeted_blocking\n",
+                "print('=== EXECUTING STAGE 2C MULTI-SCRIPT & ADDRESS BLOCKING OPTIMIZATION & PILOT B VALIDATION ===')\n",
+                "import evaluate_stage2c_blocking\n",
                 "\n",
-                "# Run the complete targeted blocking evaluation, audit, and validation pipeline\n",
-                "evaluate_targeted_blocking.main()\n"
+                "# Run the complete Stage 2C evaluation, audit, and validation pipeline\n",
+                "evaluate_stage2c_blocking.main()\n"
             ]
         },
         {

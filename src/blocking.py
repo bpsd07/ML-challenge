@@ -89,6 +89,7 @@ class HighRecallBlocker:
         no_honorific_distinctive = name_norm.get("no_honorific_distinctive", [])
         name_no_honorific = name_norm.get("name_no_honorific")
         translit_distinctive = name_norm.get("transliterated_distinctive", [])
+        translit_phonetic = name_norm.get("transliterated_phonetic", [])
         concat_distinctive = name_norm.get("name_concat_distinctive", "")
 
         addr_alnum = addr_norm["address_alnum"]
@@ -322,6 +323,64 @@ class HighRecallBlocker:
             keys["TB12_translit_house_sig"].append(f"{translit_distinctive[0]}_{house_sig}")
         elif distinctive_toks and house_sig:
             keys["TB12_translit_house_sig"].append(f"{distinctive_toks[0]}_{house_sig}")
+
+        # -------------------------------------------------------------
+        # STAGE 2C: MULTI-SCRIPT & REMAINING ADDRESS STRATEGIES (SB01 to SB08)
+        # -------------------------------------------------------------
+        # SB01: Multi-script transliterated distinctive token 0 + phonetic skeleton
+        # Covers Kannada, Telugu, Tamil, Bengali, Gujarati, Malayalam, Odia, Gurmukhi
+        if translit_distinctive:
+            keys["SB01_multiscript_translit_tok0"].append(translit_distinctive[0])
+            if translit_phonetic:
+                keys["SB01_multiscript_translit_tok0"].append(translit_phonetic[0])
+        elif distinctive_toks:
+            keys["SB01_multiscript_translit_tok0"].append(distinctive_toks[0])
+            if phonetic_toks:
+                keys["SB01_multiscript_translit_tok0"].append(phonetic_toks[0])
+
+        # SB02: Multi-script transliterated token pair
+        if len(translit_distinctive) >= 2:
+            pair = sorted([translit_distinctive[0], translit_distinctive[1]])
+            keys["SB02_multiscript_translit_pair"].append(f"{pair[0]}_{pair[1]}")
+        elif len(distinctive_toks) >= 2:
+            pair = sorted([distinctive_toks[0], distinctive_toks[1]])
+            keys["SB02_multiscript_translit_pair"].append(f"{pair[0]}_{pair[1]}")
+
+        # SB03: Multi-script transliterated token 0 + house signature / numeric atom
+        tok0 = translit_distinctive[0] if translit_distinctive else (distinctive_toks[0] if distinctive_toks else "")
+        if tok0:
+            if house_sig:
+                keys["SB03_multiscript_translit_numeric"].append(f"{tok0}_{house_sig}")
+            elif numeric_tokens:
+                keys["SB03_multiscript_translit_numeric"].append(f"{tok0}_{numeric_tokens[0]}")
+
+        # SB04: Zero-stripped numeric atom + name token 0 (recovers 045810 -> 45810, 005470 -> 5470)
+        if tok0 and numeric_tokens:
+            for num in numeric_tokens[:2]:
+                norm_num = num.lstrip('0')
+                if norm_num:
+                    keys["SB04_lstrip_zeros_numeric_name"].append(f"{tok0}_{norm_num}")
+
+        # SB05: Country + Postal + first distinctive address token (Pure address route)
+        if postal and addr_distinctive:
+            keys["SB05_pure_addr_postal_distinctive"].append(f"{cntry}_{postal}_{addr_distinctive[0]}")
+
+        # SB06: Country + two distinctive address tokens (Pure address route)
+        if len(addr_distinctive) >= 2:
+            a_pair = sorted([addr_distinctive[0], addr_distinctive[1]])
+            keys["SB06_pure_addr_distinctive_pair"].append(f"{cntry}_{a_pair[0]}_{a_pair[1]}")
+
+        # SB07: Street distinctive token + numeric atom (without postal)
+        # Recovers cases where postal is missing or discordant
+        if addr_distinctive and numeric_tokens:
+            for num in numeric_tokens[:2]:
+                norm_num = num.lstrip('0')
+                if norm_num:
+                    keys["SB07_pure_addr_tok0_numeric"].append(f"{addr_distinctive[0]}_{norm_num}")
+
+        # SB08: Name distinctive token 0 + street / locality token
+        if tok0 and addr_distinctive:
+            keys["SB08_name_tok0_city_locality"].append(f"{tok0}_{addr_distinctive[0]}")
 
         return keys
 
