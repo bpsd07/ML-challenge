@@ -5,21 +5,25 @@ def build_self_contained_notebook():
     src_dir = Path("src")
     normalization_code = (src_dir / "normalization.py").read_text(encoding="utf-8")
     blocking_code = (src_dir / "blocking.py").read_text(encoding="utf-8")
-    eval_code = (src_dir / "evaluate_stage2c_blocking.py").read_text(encoding="utf-8")
+    features_code = (src_dir / "features.py").read_text(encoding="utf-8")
+    metrics_code = (src_dir / "metrics.py").read_text(encoding="utf-8")
+    train_code = (src_dir / "train_stage3_matcher.py").read_text(encoding="utf-8")
+    chk_2c_file = Path("checkpoints/blocking/blocking_checkpoint_stage2c.json")
+    chk_2c_code = chk_2c_file.read_text(encoding="utf-8") if chk_2c_file.exists() else "{}"
 
     cells = [
         {
             "cell_type": "markdown",
             "metadata": {},
             "source": [
-                "# Amazon Business Entity Resolution: Stage 2C Multi-Script & Address Recall Recovery\n",
-                "### Objective: Recover Dravidian/Bengali/Gujarati Scripts and Address Digit/Format Misses (Target >=97% to >=98%) on Frozen Pilot B\n",
-                "- Audit actual remaining scripts (Kannada, Telugu, Tamil, Bengali, Gujarati, Malayalam, Odia, Devanagari) across missed true links.\n",
-                "- Evaluate V9 Baseline (39 strategies) on Pilot A (50k S1) and frozen independent Pilot B (50k S1).\n",
-                "- Evaluate each of the 8 Stage 2C Targeted Blockers (SB01 to SB08) individually.\n",
-                "- Evaluate progressive combinations and final optimized blocker union.\n",
-                "- Validate on frozen independent Pilot B (seed=1337) against 10.3M candidate population.\n",
-                "- Export reports/blocking_multiscript_experiments.csv, reports/blocking_multiscript_miss_analysis.md, reports/blocking_stage2c_optimization_report.md, and checkpoints/blocking/blocking_checkpoint_stage2c.json."
+                "# Amazon Business Entity Resolution: Stage 3 Candidate Enrichment, Hard-Negative Mining & LightGBM\n",
+                "### Objective: Build the highest-precision candidate scoring and ranking layer for Macro F0.5\n",
+                "- Frozen Blocker Baseline: 47 strategies, 97.27% recall on Pilot B.\n",
+                "- Feature Engineering: 60 dense similarity and provenance features.\n",
+                "- Hard-Negative Mining: Multi-priority negative sampling (blocker votes, name/address collisions, transliterations).\n",
+                "- LightGBM Classifier: Conservative regularized GBDT binary classifier with early stopping.\n",
+                "- Entity-Level Decision Policy: Empirical optimization directly maximizing Macro F0.5 per S1 (including singleton guard).\n",
+                "- Export reports and checkpoints to /kaggle/working."
             ]
         },
         {
@@ -41,12 +45,25 @@ def build_self_contained_notebook():
                 "\n",
                 "# Setup working directory structure\n",
                 "BASE_WORKING = Path('/kaggle/working/business_er') if Path('/kaggle/working').exists() else Path('./business_er')\n",
-                "for sub in ['src', 'checkpoints/blocking', 'cache', 'reports', 'output', 'logs']:\n",
+                "for sub in ['src', 'checkpoints/blocking', 'checkpoints/ml', 'cache', 'reports', 'output', 'logs']:\n",
                 "    (BASE_WORKING / sub).mkdir(parents=True, exist_ok=True)\n",
                 "\n",
                 "SRC_DIR = BASE_WORKING / 'src'\n",
                 "sys.path.insert(0, str(SRC_DIR))\n",
                 "print(f'Workspace initialized at: {BASE_WORKING}')\n"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Writing checkpoints/blocking/blocking_checkpoint_stage2c.json\n",
+                f"chk_json = {json.dumps(chk_2c_code)}\n",
+                "with open(BASE_WORKING / 'checkpoints/blocking/blocking_checkpoint_stage2c.json', 'w', encoding='utf-8') as f:\n",
+                "    f.write(chk_json)\n",
+                "print('Wrote Stage 2C blocking checkpoint successfully.')\n"
             ]
         },
         {
@@ -81,11 +98,11 @@ def build_self_contained_notebook():
             "metadata": {},
             "outputs": [],
             "source": [
-                "# Writing src/evaluate_stage2c_blocking.py\n",
-                f"pipeline_code = {json.dumps(eval_code)}\n",
-                "with open(SRC_DIR / 'evaluate_stage2c_blocking.py', 'w', encoding='utf-8') as f:\n",
-                "    f.write(pipeline_code)\n",
-                "print('Wrote evaluate_stage2c_blocking.py successfully.')\n"
+                "# Writing src/features.py\n",
+                f"feats_code = {json.dumps(features_code)}\n",
+                "with open(SRC_DIR / 'features.py', 'w', encoding='utf-8') as f:\n",
+                "    f.write(feats_code)\n",
+                "print('Wrote features.py successfully.')\n"
             ]
         },
         {
@@ -94,11 +111,37 @@ def build_self_contained_notebook():
             "metadata": {},
             "outputs": [],
             "source": [
-                "print('=== EXECUTING STAGE 2C MULTI-SCRIPT & ADDRESS BLOCKING OPTIMIZATION & PILOT B VALIDATION ===')\n",
-                "import evaluate_stage2c_blocking\n",
+                "# Writing src/metrics.py\n",
+                f"mets_code = {json.dumps(metrics_code)}\n",
+                "with open(SRC_DIR / 'metrics.py', 'w', encoding='utf-8') as f:\n",
+                "    f.write(mets_code)\n",
+                "print('Wrote metrics.py successfully.')\n"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Writing src/train_stage3_matcher.py\n",
+                f"pipeline_code = {json.dumps(train_code)}\n",
+                "with open(SRC_DIR / 'train_stage3_matcher.py', 'w', encoding='utf-8') as f:\n",
+                "    f.write(pipeline_code)\n",
+                "print('Wrote train_stage3_matcher.py successfully.')\n"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": None,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "print('=== EXECUTING STAGE 3 CANDIDATE ENRICHMENT, HARD-NEGATIVE MINING & LIGHTGBM ===')\n",
+                "import train_stage3_matcher\n",
                 "\n",
-                "# Run the complete Stage 2C evaluation, audit, and validation pipeline\n",
-                "evaluate_stage2c_blocking.main()\n"
+                "# Run the complete Stage 3 pipeline\n",
+                "train_stage3_matcher.main()\n"
             ]
         },
         {
@@ -124,12 +167,13 @@ def build_self_contained_notebook():
                 "if checkpoints_src.exists():\n",
                 "    dest_chk = export_dir / 'checkpoints'\n",
                 "    dest_chk.mkdir(parents=True, exist_ok=True)\n",
-                "    for f in checkpoints_src.rglob('*.json'):\n",
-                "        rel = f.relative_to(checkpoints_src)\n",
-                "        out_target = dest_chk / rel\n",
-                "        out_target.parent.mkdir(parents=True, exist_ok=True)\n",
-                "        shutil.copy(f, out_target)\n",
-                "        print(f'Exported checkpoint: {rel}')\n",
+                "    for f in checkpoints_src.rglob('*'):\n",
+                "        if f.is_file():\n",
+                "            rel = f.relative_to(checkpoints_src)\n",
+                "            out_target = dest_chk / rel\n",
+                "            out_target.parent.mkdir(parents=True, exist_ok=True)\n",
+                "            shutil.copy(f, out_target)\n",
+                "            print(f'Exported checkpoint: {rel} ({f.stat().st_size / 1024:.1f} KB)')\n",
                 "\n",
                 "print('\\n=== ALL ARTIFACTS READY FOR DOWNLOAD VIA KAGGLE CLI ===')\n"
             ]
