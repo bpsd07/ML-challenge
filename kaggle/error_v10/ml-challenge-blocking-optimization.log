@@ -1,0 +1,133 @@
+[{"stream_name":"stderr","time":6.903405518,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":6.90457024,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":7.888166581,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":7.888196322,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":7.888200258,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":7.888203365,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.600594396,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.600629799,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.600658349,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.600663386,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":9.816470907,"data":"=== ENVIRONMENT \u0026 RESOURCE CHECK ===\n"}
+,{"stream_name":"stdout","time":9.816527116,"data":"Total RAM: 31.35 GB | Available: 30.31 GB\n"}
+,{"stream_name":"stdout","time":9.816533855,"data":"CPU Count: 4\n"}
+,{"stream_name":"stdout","time":9.816538671,"data":"Workspace initialized at: /kaggle/working/business_er\n"}
+,{"stream_name":"stdout","time":9.830836363,"data":"Wrote Stage 2C blocking checkpoint successfully.\n"}
+,{"stream_name":"stdout","time":9.858051557,"data":"Wrote normalization.py successfully.\n"}
+,{"stream_name":"stdout","time":9.880978167,"data":"Wrote blocking.py successfully.\n"}
+,{"stream_name":"stdout","time":9.900885985,"data":"Wrote features.py successfully.\n"}
+,{"stream_name":"stdout","time":9.917525963,"data":"Wrote metrics.py successfully.\n"}
+,{"stream_name":"stdout","time":9.948908415,"data":"Wrote train_stage3_matcher.py successfully.\n"}
+,{"stream_name":"stdout","time":10.051366856,"data":"=== EXECUTING STAGE 3 CANDIDATE ENRICHMENT, HARD-NEGATIVE MINING \u0026 LIGHTGBM ===\n"}
+,{"stream_name":"stdout","time":17.359537185,"data":"================================================================================\n"}
+,{"stream_name":"stdout","time":17.35957765,"data":"STAGE 3: CANDIDATE ENRICHMENT + HARD-NEGATIVE MINING + LIGHTGBM\n"}
+,{"stream_name":"stdout","time":17.359583013,"data":"================================================================================\n"}
+,{"stream_name":"stdout","time":17.359586297,"data":"\n"}
+,{"stream_name":"stdout","time":17.359590689,"data":"--- PHASE 1: VERIFYING FROZEN STAGE 2C BLOCKER BENCHMARK ---\n"}
+,{"stream_name":"stdout","time":17.359595568,"data":"Loaded Stage 2C Checkpoint: /kaggle/working/business_er/checkpoints/blocking/blocking_checkpoint_stage2c.json\n"}
+,{"stream_name":"stdout","time":17.359600753,"data":"  Frozen Total Strategies: 47\n"}
+,{"stream_name":"stdout","time":17.359605512,"data":"  Pilot B Frozen Benchmark Recall: 97.2745%\n"}
+,{"stream_name":"stdout","time":17.359610643,"data":"  Pilot B Mean Candidates/S1: 11644.4\n"}
+,{"stream_name":"stdout","time":17.359615783,"data":"\n"}
+,{"stream_name":"stdout","time":17.359635009,"data":"Loading ground truth...\n"}
+,{"stream_name":"stdout","time":39.265823972,"data":"Loaded ground truth for 2,206,821 S1 entities.\n"}
+,{"stream_name":"stdout","time":39.265878141,"data":"\n"}
+,{"stream_name":"stdout","time":39.265883927,"data":"Loading Train Source 1...\n"}
+,{"stream_name":"stdout","time":42.631557782,"data":"Entity-Level Split (zero entity leakage):\n"}
+,{"stream_name":"stdout","time":42.631588964,"data":"  Training S1 Entities:   30,000 (104,277 GT links)\n"}
+,{"stream_name":"stdout","time":42.63159498,"data":"  Validation S1 Entities: 10,000 (34,589 GT links)\n"}
+,{"stream_name":"stdout","time":42.631600172,"data":"\n"}
+,{"stream_name":"stdout","time":42.631605131,"data":"Loading Full S2 and S3 Candidate Sources...\n"}
+,{"stream_name":"stdout","time":57.41947123,"data":"Loaded 5,034,616 S2 and 5,285,603 S3 records in 14.74s.\n"}
+,{"stream_name":"stdout","time":57.419518096,"data":"Indexing 5,034,616 records from Source 2...\n"}
+,{"stream_name":"stdout","time":379.138233874,"data":"  Indexed 1,000,000 records in 321.7s...\n"}
+,{"stream_name":"stdout","time":691.763885943,"data":"  Indexed 2,000,000 records in 634.3s...\n"}
+,{"stream_name":"stdout","time":998.963474721,"data":"  Indexed 3,000,000 records in 941.5s...\n"}
+,{"stream_name":"stdout","time":1315.559850037,"data":"  Indexed 4,000,000 records in 1258.1s...\n"}
+,{"stream_name":"stdout","time":1610.435168222,"data":"  Indexed 5,000,000 records in 1553.0s...\n"}
+,{"stream_name":"stdout","time":1620.570617858,"data":"Finished indexing Source 2 (5,034,616 records) in 1563.14s.\n"}
+,{"stream_name":"stdout","time":1620.570663939,"data":"Indexing 5,285,603 records from Source 3...\n"}
+,{"stream_name":"stdout","time":1947.087933179,"data":"  Indexed 1,000,000 records in 326.5s...\n"}
+,{"stream_name":"stdout","time":2284.174532309,"data":"  Indexed 2,000,000 records in 663.6s...\n"}
+,{"stream_name":"stdout","time":2582.101303459,"data":"  Indexed 3,000,000 records in 961.5s...\n"}
+,{"stream_name":"stdout","time":2883.610304543,"data":"  Indexed 4,000,000 records in 1263.0s...\n"}
+,{"stream_name":"stdout","time":3239.030544137,"data":"  Indexed 5,000,000 records in 1618.5s...\n"}
+,{"stream_name":"stdout","time":3326.378163506,"data":"Finished indexing Source 3 (5,285,603 records) in 1705.79s.\n"}
+,{"stream_name":"stdout","time":3326.378203702,"data":"\n"}
+,{"stream_name":"stdout","time":3326.378209861,"data":"--- PHASE 2 \u0026 3: HARD NEGATIVE MINING \u0026 FEATURE GENERATION (TRAIN) ---\n"}
+,{"stream_name":"stdout","time":3326.378215278,"data":"  Processing train batch 1/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":3467.4478978,"data":"  Processing train batch 2/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":3603.557209634,"data":"  Processing train batch 3/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":3744.650415345,"data":"  Processing train batch 4/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":3883.175053291,"data":"  Processing train batch 5/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":4023.296298267,"data":"  Processing train batch 6/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":4159.519752865,"data":"  Processing train batch 7/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":4297.375992524,"data":"  Processing train batch 8/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":4435.518762012,"data":"  Processing train batch 9/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":4574.079952968,"data":"  Processing train batch 10/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":4711.632370473,"data":"  Processing train batch 11/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":4900.217113279,"data":"  Processing train batch 12/12 (2,500 entities)...\n"}
+,{"stream_name":"stdout","time":5119.977140562,"data":"\n"}
+,{"stream_name":"stdout","time":5119.977183722,"data":"Training Dataset Ready in 1793.61s:\n"}
+,{"stream_name":"stdout","time":5119.977190845,"data":"  Total Rows: 461,463 | Shape: (461463, 60)\n"}
+,{"stream_name":"stdout","time":5119.977196397,"data":"  Positives:  101,502 (22.00%)\n"}
+,{"stream_name":"stdout","time":5119.977201108,"data":"  Negatives:  359,961 (78.00%)\n"}
+,{"stream_name":"stdout","time":5119.977205486,"data":"\n"}
+,{"stream_name":"stdout","time":5119.977210197,"data":"--- PHASE 4: VALIDATION DATASET GENERATION (10,000 HELD-OUT S1) ---\n"}
+,{"stream_name":"stdout","time":5119.977214039,"data":"  Processing validation batch 1/4 (2,500 entities)...\n"}
+,{"stream_name":"stderr","time":5646.987580671,"data":"Kernel died while waiting for execute reply.\n"}
+,{"stream_name":"stderr","time":5647.067189321,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":5647.067215244,"data":"  File \"/usr/local/lib/python3.12/dist-packages/nbclient/client.py\", line 949, in async_execute_cell\n"}
+,{"stream_name":"stderr","time":5647.110547462,"data":"    exec_reply = await self.task_poll_for_reply\n"}
+,{"stream_name":"stderr","time":5647.110621559,"data":"                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.110630734,"data":"  File \"/usr/local/lib/python3.12/dist-packages/nbclient/client.py\", line 730, in _async_poll_for_reply\n"}
+,{"stream_name":"stderr","time":5647.110882592,"data":"    msg = await ensure_async(self.kc.shell_channel.get_msg(timeout=new_timeout))\n"}
+,{"stream_name":"stderr","time":5647.110929627,"data":"          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.111035745,"data":"  File \"/usr/local/lib/python3.12/dist-packages/nbclient/util.py\", line 96, in ensure_async\n"}
+,{"stream_name":"stderr","time":5647.112009375,"data":"    result = await obj\n"}
+,{"stream_name":"stderr","time":5647.1120236,"data":"             ^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.112028994,"data":"  File \"/usr/local/lib/python3.12/dist-packages/jupyter_client/channels.py\", line 224, in get_msg\n"}
+,{"stream_name":"stderr","time":5647.122765078,"data":"    ready = await self.socket.poll(timeout)\n"}
+,{"stream_name":"stderr","time":5647.1227965,"data":"            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.122835635,"data":"asyncio.exceptions.CancelledError\n"}
+,{"stream_name":"stderr","time":5647.12287047,"data":"\n"}
+,{"stream_name":"stderr","time":5647.122876264,"data":"During handling of the above exception, another exception occurred:\n"}
+,{"stream_name":"stderr","time":5647.122881497,"data":"\n"}
+,{"stream_name":"stderr","time":5647.122885624,"data":"Traceback (most recent call last):\n"}
+,{"stream_name":"stderr","time":5647.122889748,"data":"  File \"\u003cstring\u003e\", line 1, in \u003cmodule\u003e\n"}
+,{"stream_name":"stderr","time":5647.122897924,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/execute.py\", line 116, in execute_notebook\n"}
+,{"stream_name":"stderr","time":5647.132988872,"data":"    nb = papermill_engines.execute_notebook_with_engine(\n"}
+,{"stream_name":"stderr","time":5647.133021902,"data":"         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.133027512,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/engines.py\", line 49, in execute_notebook_with_engine\n"}
+,{"stream_name":"stderr","time":5647.133847701,"data":"    return self.get_engine(engine_name).execute_notebook(nb, kernel_name, **kwargs)\n"}
+,{"stream_name":"stderr","time":5647.133899002,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.133914492,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/engines.py\", line 371, in execute_notebook\n"}
+,{"stream_name":"stderr","time":5647.13415749,"data":"    cls.execute_managed_notebook(nb_man, kernel_name, log_output=log_output, **kwargs)\n"}
+,{"stream_name":"stderr","time":5647.134219917,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/engines.py\", line 443, in execute_managed_notebook\n"}
+,{"stream_name":"stderr","time":5647.134409857,"data":"    return PapermillNotebookClient(nb_man, **final_kwargs).execute()\n"}
+,{"stream_name":"stderr","time":5647.134620566,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.13462986,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/clientwrap.py\", line 45, in execute\n"}
+,{"stream_name":"stderr","time":5647.135524759,"data":"    self.papermill_execute_cells()\n"}
+,{"stream_name":"stderr","time":5647.135537791,"data":"  File \"/usr/local/lib/python3.12/dist-packages/papermill/clientwrap.py\", line 72, in papermill_execute_cells\n"}
+,{"stream_name":"stderr","time":5647.135664926,"data":"    self.execute_cell(cell, index)\n"}
+,{"stream_name":"stderr","time":5647.135731021,"data":"  File \"/usr/local/lib/python3.12/dist-packages/nbclient/util.py\", line 84, in wrapped\n"}
+,{"stream_name":"stderr","time":5647.135914576,"data":"    return just_run(coro(*args, **kwargs))\n"}
+,{"stream_name":"stderr","time":5647.135922364,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.135926823,"data":"  File \"/usr/local/lib/python3.12/dist-packages/nbclient/util.py\", line 62, in just_run\n"}
+,{"stream_name":"stderr","time":5647.136057513,"data":"    return loop.run_until_complete(coro)\n"}
+,{"stream_name":"stderr","time":5647.136064344,"data":"           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.13619044,"data":"  File \"/usr/lib/python3.12/asyncio/base_events.py\", line 691, in run_until_complete\n"}
+,{"stream_name":"stderr","time":5647.147103409,"data":"    return future.result()\n"}
+,{"stream_name":"stderr","time":5647.147143116,"data":"           ^^^^^^^^^^^^^^^\n"}
+,{"stream_name":"stderr","time":5647.147150337,"data":"  File \"/usr/local/lib/python3.12/dist-packages/nbclient/client.py\", line 953, in async_execute_cell\n"}
+,{"stream_name":"stderr","time":5647.14745317,"data":"    raise DeadKernelError(\"Kernel died\")\n"}
+,{"stream_name":"stderr","time":5647.147463326,"data":"nbclient.exceptions.DeadKernelError: Kernel died\n"}
+,{"stream_name":"stderr","time":5651.331080726,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":5651.331124371,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":5651.717963096,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":5651.717990175,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":5653.552983165,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":5653.937265635,"data":"[NbConvertApp] Writing 134816 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":5656.703278284,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":5657.278534113,"data":"[NbConvertApp] Writing 645386 bytes to __results__.html\n"}
+]
