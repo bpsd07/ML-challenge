@@ -78,8 +78,6 @@ _SUFFIX_RE = re.compile(
     r'\b(' + '|'.join(re.escape(s) for s in sorted(_SUFFIXES, key=len, reverse=True)) + r')\b',
     re.IGNORECASE
 )
-_PHONETIC = [('ee','i'),('oo','u'),('sh','s'),('ch','c'),('dh','d'),
-             ('th','t'),('bh','b'),('ph','f'),('kh','k'),('gh','g'),('w','v')]
 _STOPS = {
     'the','and','of','in','for','to','at','by','on','a','an','co','company',
     'services','service','enterprises','enterprise','group','holdings','solutions',
@@ -90,13 +88,6 @@ _STOPS = {
 
 def _strip_acc(t):
     return ''.join(c for c in unicodedata.normalize('NFKD', t) if not unicodedata.combining(c))
-
-def _skel(w):
-    w = w.lower()
-    for p, r in _PHONETIC: w = w.replace(p, r)
-    first = w[0] if w else ''
-    rest  = re.sub(r'[aeiouy\s]','', w[1:])
-    return re.sub(r'(.)\1+', r'\1', first+rest)
 
 def _ng(text, n):
     t = re.sub(r'\s+',' ', text).strip()
@@ -110,12 +101,11 @@ def nn(raw):
     nosuf = re.sub(r'\s+',' ', _SUFFIX_RE.sub(' ', alnum)).strip()
     toks  = [t for t in alnum.split() if t]
     tns   = [t for t in nosuf.split() if t]
-    dist  = [t for t in tns if t not in _STOPS and len(t) >= 4]
-    sk    = [_skel(t) for t in tns if len(t) >= 3]
+    dist  = [t for t in tns if t not in _STOPS and len(t) >= 3]
     return dict(
         alnum=alnum, nosuf=nosuf, toks=toks, tns=tns,
         sorted_t=' '.join(sorted(toks)), sorted_ns=' '.join(sorted(tns)),
-        dist=dist, sk=sk, init=''.join(t[0] for t in toks),
+        dist=dist, init=''.join(t[0] for t in toks),
         c3=_ng(nosuf,3), c4=_ng(nosuf,4),
         pfx4=alnum[:4], pfx6=alnum[:6], ntoks=len(toks),
     )
@@ -150,13 +140,13 @@ STRATEGY_NAMES = [
     'B01_exact_name','B02_no_suffix','B03_sorted_toks','B04_sorted_nosuf',
     'B05_first2','B06_tok0','B07_tok1','B08_initials','B09_pfx4','B10_pfx6',
     'B11_dist0','B11_dist1','B11_dist2','B11_dist3',
-    'B12_dist_pair01','B13_skel0','B13_skel1','B13_skel2','B14_skel_pair01',
+    'B12_dist_pair01','B13_exact_tok0_postal','B14_exact_tok0_house',
     'B15_3gram_sig','B16_4gram_sig','B17_nosuf_lenb',
     'B18_house_tok0','B19_postal_pfx4','B20_postal_house','B21_numsig_tok0',
     'B22_addr_dist0','B23_addr_dist01','B24_addr_name_joint',
     'B25_slash','B26_ah','B27_addr_3gram','B28_addr_lead2','B29_num_toks',
-    'B30_nosuf_postal','B31_skel_house','B32_dist0_postal',
-    'B33_ph_dist0','B34_ph_tok0','B35_ph_pair01',
+    'B30_nosuf_postal','B31_exact_dist0_house','B32_dist0_postal',
+    'B33_exact_tok0_tok1','B34_exact_sorted_first2','B35_exact_nosuf_house',
     'B36_sortns_addr','B37_tok0_lenb','B38_tok2','B39_tok3',
 ]
 
@@ -186,7 +176,7 @@ class Blocker:
 
     def _apply(self, N, A, c, fn):
         al=N['alnum']; ns=N['nosuf']; toks=N['toks']; st=N['sorted_t']
-        sns=N['sorted_ns']; dist=N['dist']; sk=N['sk']
+        sns=N['sorted_ns']; dist=N['dist']
         ini=N['init']; c3=N['c3']; c4=N['c4']; p4=N['pfx4']; p6=N['pfx6']
         postal=A['postal']; house=A['house']; nums=A['nums']
         adist=A['dist']; sl=A['slash']; ah=A['ah']
@@ -204,9 +194,8 @@ class Blocker:
         if p6:                          fn('B10_pfx6', p6)
         for i,d in enumerate(dist[:4]): fn(f'B11_dist{i}', d)
         if len(dist)>=2:                fn('B12_dist_pair01', f"{dist[0]}_{dist[1]}")
-        for i,s in enumerate(sk[:3]):
-            if s: fn(f'B13_skel{i}', s)
-        if len(sk)>=2 and sk[0] and sk[1]: fn('B14_skel_pair01', f"{sk[0]}_{sk[1]}")
+        if toks and postal:             fn('B13_exact_tok0_postal', f"{toks[0]}_{postal}")
+        if toks and house:              fn('B14_exact_tok0_house', f"{toks[0]}_{house}")
         if c3: fn('B15_3gram_sig', '_'.join(sorted(c3)[:3]))
         if c4: fn('B16_4gram_sig', '_'.join(sorted(c4)[:2]))
         if ns: fn('B17_nosuf_lenb', f"{ns[:6]}_{len(ns)//5}")
@@ -223,17 +212,12 @@ class Blocker:
         if len(atoks)>=2: fn('B28_addr_lead2', f"{atoks[0]} {atoks[1]}")
         if nums: fn('B29_num_toks', '_'.join(sorted(nums[:4])))
         if ns and postal: fn('B30_nosuf_postal', f"{ns[:8]}_{postal}")
-        if sk and sk[0] and house: fn('B31_skel_house', f"{sk[0]}_{house}")
+        if dist and house: fn('B31_exact_dist0_house', f"{dist[0]}_{house}")
         if dist and postal: fn('B32_dist0_postal', f"{dist[0]}_{postal}")
-        if dist:
-            ph = _skel(dist[0])
-            if ph: fn('B33_ph_dist0', ph)
-        if toks:
-            ph0 = _skel(toks[0])
-            if ph0: fn('B34_ph_tok0', ph0)
         if len(toks)>=2:
-            php = f"{_skel(toks[0])}_{_skel(toks[1])}"
-            if php != '_': fn('B35_ph_pair01', php)
+            fn('B33_exact_tok0_tok1', f"{toks[0]}_{toks[1]}")
+            fn('B34_exact_sorted_first2', f"{min(toks[0], toks[1])}_{max(toks[0], toks[1])}")
+        if ns and house: fn('B35_exact_nosuf_house', f"{ns[:8]}_{house}")
         if sns and adist: fn('B36_sortns_addr', f"{sns[:10]}_{adist[0]}")
         if toks: fn('B37_tok0_lenb', f"{toks[0][:5]}_{len(al)//4}")
         if len(toks)>=3: fn('B38_tok2', toks[2])
