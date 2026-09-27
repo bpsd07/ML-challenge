@@ -52,3 +52,8 @@ student_resource/dataset/
 .vscode/
 *.swp
 *.swo
+
+# Kaggle temporary logs and download staging
+kaggle/error_logs*/
+kaggle/results_*/
+kaggle/test_poll/
