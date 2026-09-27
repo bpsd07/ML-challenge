@@ -4,6 +4,7 @@ Generates:
   - output/matching_results.tsv
   - output/candidate_pairs.tsv
 Complies with ML Challenge 2026 submission specifications.
+Runs country-partitioned streaming to operate in <7 GB RAM.
 """
 
 import sys
@@ -58,7 +59,7 @@ def run_stage3_test_inference(
     top_k_candidates: int = 40
 ):
     print("=" * 80)
-    print("STAGE 3: FULL TEST SET INFERENCE PIPELINE")
+    print("STAGE 3: FULL TEST SET INFERENCE PIPELINE (COUNTRY-PARTITIONED)")
     print("=" * 80)
     t0_start = time.time()
 
@@ -109,40 +110,7 @@ def run_stage3_test_inference(
     df_s3 = pl.read_csv(p_s3, separator="\t")
     print(f"Test S3 records: {len(df_s3):,}")
 
-    # 3. Index Test Candidates using Stage 2C Blocker
-    blocker = HighRecallBlocker(max_key_frequency=MAX_KEY_FREQUENCY)
-    blocker.index_candidate_source(df_s2, "Test Source 2")
-    blocker.index_candidate_source(df_s3, "Test Source 3")
-
-    # Fast batch candidate metadata fetcher
-    def fetch_cand_metadata_batch(cand_ids_needed: set):
-        s2_ids = [c for c in cand_ids_needed if c.startswith("S2-")]
-        s3_ids = [c for c in cand_ids_needed if c.startswith("S3-")]
-
-        batch_lookup = {}
-        if s2_ids:
-            df_sub = df_s2.filter(pl.col("entity_id").is_in(s2_ids))
-            for row in df_sub.select(["entity_id", "business_name", "business_address", "country"]).iter_rows():
-                cid = row[0]
-                cntry = str(row[3] or "UNKNOWN")
-                n_norm = normalize_business_name(row[1] or "", country=cntry)
-                a_norm = normalize_business_address(row[2] or "", country=cntry)
-                batch_lookup[cid] = (n_norm, a_norm, cntry)
-            del df_sub
-
-        if s3_ids:
-            df_sub = df_s3.filter(pl.col("entity_id").is_in(s3_ids))
-            for row in df_sub.select(["entity_id", "business_name", "business_address", "country"]).iter_rows():
-                cid = row[0]
-                cntry = str(row[3] or "UNKNOWN")
-                n_norm = normalize_business_name(row[1] or "", country=cntry)
-                a_norm = normalize_business_address(row[2] or "", country=cntry)
-                batch_lookup[cid] = (n_norm, a_norm, cntry)
-            del df_sub
-
-        return batch_lookup
-
-    # 4. Stream inference and write directly to output files
+    # Output files
     out_matching_path = OUTPUT_DIR / "matching_results.tsv"
     out_candidate_path = OUTPUT_DIR / "candidate_pairs.tsv"
 
@@ -156,148 +124,197 @@ def run_stage3_test_inference(
     f_match.write("source1_entity_id\tmatched_entity_ids\n")
     f_cand.write("source1_entity_id\tcandidate_entity_ids\n")
 
-    BATCH_SIZE = 5000
-    n_total_s1 = len(df_s1)
-    n_batches = (n_total_s1 + BATCH_SIZE - 1) // BATCH_SIZE
-
     total_matches_predicted = 0
     total_singletons = 0
-    t0_infer = time.time()
+    total_s1_processed = 0
 
-    for b_idx in range(n_batches):
-        b_slice = df_s1.slice(b_idx * BATCH_SIZE, BATCH_SIZE)
-        t_b_start = time.time()
+    # Strict 0.000% cross-country matching partition
+    # Process France first (smallest), then US, then India
+    countries = ["France", "US", "India"]
+    
+    for cntry_name in countries:
+        df_s1_cntry = df_s1.filter(pl.col("country") == cntry_name)
+        df_s2_cntry = df_s2.filter(pl.col("country") == cntry_name)
+        df_s3_cntry = df_s3.filter(pl.col("country") == cntry_name)
 
-        batch_queries = []
-        batch_needed_cands = set()
+        n_s1_cntry = len(df_s1_cntry)
+        print(f"\n" + "=" * 60)
+        print(f"PROCESSING COUNTRY: {cntry_name}")
+        print(f"  S1: {n_s1_cntry:,} | S2: {len(df_s2_cntry):,} | S3: {len(df_s3_cntry):,}")
+        print("=" * 60)
 
-        # Step A: Blocker candidate generation & vote ranking
-        for row in b_slice.iter_rows():
-            sid = row[0]
-            raw_name = row[1] or ""
-            raw_addr = row[2] or ""
-            cntry = str(row[3] or "UNKNOWN")
+        # Index only this country's candidates (<7 GB RAM footprint)
+        blocker = HighRecallBlocker(max_key_frequency=MAX_KEY_FREQUENCY)
+        blocker.index_candidate_source(df_s2_cntry, f"Test S2 ({cntry_name})")
+        blocker.index_candidate_source(df_s3_cntry, f"Test S3 ({cntry_name})")
 
-            s1_n_norm = normalize_business_name(raw_name, country=cntry)
-            s1_a_norm = normalize_business_address(raw_addr, country=cntry)
+        def fetch_cand_metadata_batch(cand_ids_needed: set):
+            s2_ids = [c for c in cand_ids_needed if c.startswith("S2-")]
+            s3_ids = [c for c in cand_ids_needed if c.startswith("S3-")]
 
-            cands, strat_map = blocker.query_s1_entity(s1_n_norm, s1_a_norm, cntry)
+            batch_lookup = {}
+            if s2_ids:
+                df_sub = df_s2_cntry.filter(pl.col("entity_id").is_in(s2_ids))
+                for row in df_sub.select(["entity_id", "business_name", "business_address", "country"]).iter_rows():
+                    cid = row[0]
+                    c_cntry = str(row[3] or cntry_name)
+                    n_norm = normalize_business_name(row[1] or "", country=c_cntry)
+                    a_norm = normalize_business_address(row[2] or "", country=c_cntry)
+                    batch_lookup[cid] = (n_norm, a_norm, c_cntry)
+                del df_sub
 
-            cand_votes = Counter()
-            for strat, clist in strat_map.items():
-                cand_votes.update(clist)
+            if s3_ids:
+                df_sub = df_s3_cntry.filter(pl.col("entity_id").is_in(s3_ids))
+                for row in df_sub.select(["entity_id", "business_name", "business_address", "country"]).iter_rows():
+                    cid = row[0]
+                    c_cntry = str(row[3] or cntry_name)
+                    n_norm = normalize_business_name(row[1] or "", country=c_cntry)
+                    a_norm = normalize_business_address(row[2] or "", country=c_cntry)
+                    batch_lookup[cid] = (n_norm, a_norm, c_cntry)
+                del df_sub
 
-            top_cands_votes = cand_votes.most_common(top_k_candidates)
-            top_cands = [c for c, _ in top_cands_votes]
-            cand_ranks = {c: r + 1 for r, c in enumerate(top_cands)}
+            return batch_lookup
 
-            # Blocker signals only for candidates scored by model
-            cands_set = set(top_cands)
-            entity_cand_strats = {c: set() for c in cands_set}
-            entity_cand_votes = {c: cand_votes[c] for c in cands_set}
-            entity_cand_ranks = {c: cand_ranks[c] for c in cands_set}
+        BATCH_SIZE = 5000
+        n_batches = (n_s1_cntry + BATCH_SIZE - 1) // BATCH_SIZE
+        t0_cntry = time.time()
 
-            for strat, clist in strat_map.items():
-                for c in clist:
-                    if c in entity_cand_strats:
-                        entity_cand_strats[c].add(strat)
+        for b_idx in range(n_batches):
+            b_slice = df_s1_cntry.slice(b_idx * BATCH_SIZE, BATCH_SIZE)
 
-            batch_needed_cands.update(cands_set)
+            batch_queries = []
+            batch_needed_cands = set()
 
-            batch_queries.append({
-                "sid": sid,
-                "s1_n_norm": s1_n_norm,
-                "s1_a_norm": s1_a_norm,
-                "cntry": cntry,
-                "top_cands": top_cands,
-                "cand_votes": entity_cand_votes,
-                "cand_ranks": entity_cand_ranks,
-                "cand_strats": entity_cand_strats
-            })
+            for row in b_slice.iter_rows():
+                sid = row[0]
+                raw_name = row[1] or ""
+                raw_addr = row[2] or ""
+                cntry = str(row[3] or cntry_name)
 
-        # Step B: Batch candidate metadata lookup
-        batch_metadata = fetch_cand_metadata_batch(batch_needed_cands)
+                s1_n_norm = normalize_business_name(raw_name, country=cntry)
+                s1_a_norm = normalize_business_address(raw_addr, country=cntry)
 
-        # Step C: Feature extraction and scoring
-        for q in batch_queries:
-            sid = q["sid"]
-            s1_n = q["s1_n_norm"]
-            s1_a = q["s1_a_norm"]
-            cntry = q["cntry"]
-            scored_cands = q["top_cands"]
+                cands, strat_map = blocker.query_s1_entity(s1_n_norm, s1_a_norm, cntry)
 
-            # Write candidate_pairs.tsv
-            cand_str = ",".join(scored_cands)
-            f_cand.write(f"{sid}\t{cand_str}\n")
+                cand_votes = Counter()
+                for strat, clist in strat_map.items():
+                    cand_votes.update(clist)
 
-            if not scored_cands:
-                f_match.write(f"{sid}\t\n")
-                total_singletons += 1
-                continue
+                top_cands_votes = cand_votes.most_common(top_k_candidates)
+                top_cands = [c for c, _ in top_cands_votes]
+                cand_ranks = {c: r + 1 for r, c in enumerate(top_cands)}
 
-            # Build feature matrix for this entity's candidates
-            feat_rows = []
-            valid_cands = []
-            for cid in scored_cands:
-                if cid in batch_metadata:
-                    c_n, c_a, _ = batch_metadata[cid]
-                    v_count = q["cand_votes"].get(cid, 1)
-                    r_rank = q["cand_ranks"].get(cid, 1)
-                    feats = compute_pairwise_features(
-                        s1_n, s1_a, c_n, c_a, cid, cntry,
-                        blockers_fired=v_count, cand_rank=r_rank, strategies_fired=q["cand_strats"].get(cid, set())
-                    )
-                    feat_rows.append([feats[f] for f in FEATURE_NAMES])
-                    valid_cands.append(cid)
+                cands_set = set(top_cands)
+                entity_cand_strats = {c: set() for c in cands_set}
+                entity_cand_votes = {c: cand_votes[c] for c in cands_set}
+                entity_cand_ranks = {c: cand_ranks[c] for c in cands_set}
 
-            if not feat_rows:
-                f_match.write(f"{sid}\t\n")
-                total_singletons += 1
-                continue
+                for strat, clist in strat_map.items():
+                    for c in clist:
+                        if c in entity_cand_strats:
+                            entity_cand_strats[c].add(strat)
 
-            X_entity = np.array(feat_rows, dtype=np.float32)
-            probs = model.predict(X_entity)
+                batch_needed_cands.update(cands_set)
 
-            cand_probs = list(zip(valid_cands, probs))
-            cand_probs.sort(key=lambda x: x[1], reverse=True)
-            p_max = cand_probs[0][1]
+                batch_queries.append({
+                    "sid": sid,
+                    "s1_n_norm": s1_n_norm,
+                    "s1_a_norm": s1_a_norm,
+                    "cntry": cntry,
+                    "top_cands": top_cands,
+                    "cand_votes": entity_cand_votes,
+                    "cand_ranks": entity_cand_ranks,
+                    "cand_strats": entity_cand_strats
+                })
 
-            # Apply Decision Policy: Singleton guard + absolute threshold + relative margin
-            if p_max < opt_t_guard:
-                f_match.write(f"{sid}\t\n")
-                total_singletons += 1
-            else:
-                matched_ids = []
-                for cid, p in cand_probs:
-                    if p >= opt_t_abs and p >= (p_max * opt_r_rel):
-                        matched_ids.append(cid)
+            batch_metadata = fetch_cand_metadata_batch(batch_needed_cands)
 
-                match_str = ",".join(matched_ids)
-                f_match.write(f"{sid}\t{match_str}\n")
-                if matched_ids:
-                    total_matches_predicted += len(matched_ids)
-                else:
+            for q in batch_queries:
+                sid = q["sid"]
+                s1_n = q["s1_n_norm"]
+                s1_a = q["s1_a_norm"]
+                cntry = q["cntry"]
+                scored_cands = q["top_cands"]
+
+                cand_str = ",".join(scored_cands)
+                f_cand.write(f"{sid}\t{cand_str}\n")
+
+                if not scored_cands:
+                    f_match.write(f"{sid}\t\n")
                     total_singletons += 1
+                    total_s1_processed += 1
+                    continue
 
-        del batch_metadata, batch_queries, batch_needed_cands
+                feat_rows = []
+                valid_cands = []
+                for cid in scored_cands:
+                    if cid in batch_metadata:
+                        c_n, c_a, _ = batch_metadata[cid]
+                        v_count = q["cand_votes"].get(cid, 1)
+                        r_rank = q["cand_ranks"].get(cid, 1)
+                        feats = compute_pairwise_features(
+                            s1_n, s1_a, c_n, c_a, cid, cntry,
+                            blockers_fired=v_count, cand_rank=r_rank, strategies_fired=q["cand_strats"].get(cid, set())
+                        )
+                        feat_rows.append([feats[f] for f in FEATURE_NAMES])
+                        valid_cands.append(cid)
+
+                if not feat_rows:
+                    f_match.write(f"{sid}\t\n")
+                    total_singletons += 1
+                    total_s1_processed += 1
+                    continue
+
+                X_entity = np.array(feat_rows, dtype=np.float32)
+                probs = model.predict(X_entity)
+
+                cand_probs = list(zip(valid_cands, probs))
+                cand_probs.sort(key=lambda x: x[1], reverse=True)
+                p_max = cand_probs[0][1]
+
+                # Policy: Singleton guard + absolute threshold + relative margin
+                if p_max < opt_t_guard:
+                    f_match.write(f"{sid}\t\n")
+                    total_singletons += 1
+                else:
+                    matched_ids = []
+                    for cid, p in cand_probs:
+                        if p >= opt_t_abs and p >= (p_max * opt_r_rel):
+                            matched_ids.append(cid)
+
+                    match_str = ",".join(matched_ids)
+                    f_match.write(f"{sid}\t{match_str}\n")
+                    if matched_ids:
+                        total_matches_predicted += len(matched_ids)
+                    else:
+                        total_singletons += 1
+
+                total_s1_processed += 1
+
+            del batch_metadata, batch_queries, batch_needed_cands
+            gc.collect()
+
+            if (b_idx + 1) % 10 == 0 or (b_idx + 1) == n_batches:
+                elapsed = time.time() - t0_cntry
+                proc_cntry = min((b_idx + 1) * BATCH_SIZE, n_s1_cntry)
+                rate = proc_cntry / elapsed if elapsed > 0 else 0
+                rem_cntry = n_s1_cntry - proc_cntry
+                eta_m = (rem_cntry / rate) / 60 if rate > 0 else 0
+                print(f"  [{cntry_name}] {proc_cntry:,}/{n_s1_cntry:,} ({proc_cntry/n_s1_cntry*100:.1f}%) | {rate:.1f} S1/s | ETA: {eta_m:.1f}m")
+
+        del blocker, df_s1_cntry, df_s2_cntry, df_s3_cntry
         gc.collect()
-
-        if (b_idx + 1) % 10 == 0 or (b_idx + 1) == n_batches:
-            elapsed = time.time() - t0_infer
-            processed_s1 = min((b_idx + 1) * BATCH_SIZE, n_total_s1)
-            rate = processed_s1 / elapsed
-            rem_s1 = n_total_s1 - processed_s1
-            eta_sec = rem_s1 / rate if rate > 0 else 0
-            print(f"  Processed {processed_s1:,}/{n_total_s1:,} entities ({processed_s1/n_total_s1*100:.1f}%) | Speed: {rate:.1f} S1/s | ETA: {eta_sec/60:.1f}m")
+        print(f"Finished {cntry_name} in {time.time()-t0_cntry:.1f}s.")
 
     f_match.close()
     f_cand.close()
 
-    print(f"\nTest Inference Completed in {time.time()-t0_infer:.2f}s:")
-    print(f"  Total S1 Entities Processed: {n_total_s1:,}")
-    print(f"  Total Singletons (0 matches): {total_singletons:,} ({total_singletons/n_total_s1*100:.2f}%)")
-    print(f"  Total Matches Predicted:     {total_matches_predicted:,} (Mean: {total_matches_predicted/max(1, n_total_s1-total_singletons):.2f}/active S1)")
-    print(f"Total Pipeline Runtime: {time.time()-t0_start:.2f}s")
+    print(f"\n" + "=" * 80)
+    print(f"TEST INFERENCE COMPLETE in {time.time()-t0_start:.2f}s:")
+    print(f"  Total S1 Entities Processed: {total_s1_processed:,}")
+    print(f"  Total Singletons (0 matches): {total_singletons:,} ({total_singletons/total_s1_processed*100:.2f}%)")
+    print(f"  Total Matches Predicted:     {total_matches_predicted:,} (Mean: {total_matches_predicted/max(1, total_s1_processed-total_singletons):.2f}/active S1)")
+    print("=" * 80)
 
 
 if __name__ == "__main__":
